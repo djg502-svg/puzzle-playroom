@@ -86,11 +86,14 @@ self.addEventListener("activate", (e) => {{
   e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 }});
 // Online: fetch fresh copies (and refresh the cache). Offline: serve the cached game.
+// "no-cache" makes the browser check with the server instead of reusing GitHub's
+// 10-minute HTTP cache, so updates appear on the next online launch.
 self.addEventListener("fetch", (e) => {{
   if (e.request.method !== "GET") return;
+  const sameOrigin = new URL(e.request.url).origin === location.origin;
   e.respondWith(
-    fetch(e.request).then((res) => {{
-      if (res.ok && new URL(e.request.url).origin === location.origin) {{
+    fetch(sameOrigin ? new Request(e.request.url, {{ cache: "no-cache" }}) : e.request).then((res) => {{
+      if (res.ok && sameOrigin) {{
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(e.request, copy));
       }}
