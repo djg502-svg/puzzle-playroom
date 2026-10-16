@@ -60,6 +60,9 @@ h1 span:nth-child(2) { color: var(--ink); }
 .size-btn[aria-pressed="true"] { background: var(--sun); }
 .mini { display: grid; gap: 3px; }
 .mini i { width: 9px; height: 9px; border-radius: 3px; background: var(--ink); opacity: .75; }
+.mini i.bar { width: 28px; height: 5px; border-radius: 2px; }
+.mode-btn { font-size: 15px; font-weight: 800; gap: 3px; }
+.mode-btn svg { width: 36px; height: 30px; }
 .icon-btn {
   width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--card);
   box-shadow: 0 5px 0 var(--shadow); display: grid; place-items: center;
@@ -164,6 +167,7 @@ h1 span:nth-child(2) { color: var(--ink); }
     <div class="top">
       <h1><span>Puzzle</span> <span>Playroom</span></h1>
       <div class="controls">
+        <div class="sizes" role="group" aria-label="Puzzle style" id="modes"></div>
         <div class="sizes" role="group" aria-label="Number of pieces" id="sizes"></div>
         <button class="icon-btn" id="soundBtn" aria-label="Sound on"></button>
       </div>
@@ -679,8 +683,14 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem("pp." + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem("pp." + k, JSON.stringify(v)); } catch (e) { } },
 };
-const SIZES = { 6: [3, 2], 9: [3, 3], 12: [4, 3] };
-let size = store.get("size", 6); if (!SIZES[size]) size = 6;
+// Puzzle styles. Each size is [pieces, columns, rows]. "board" fixes the picture shape for strip styles.
+const MODES = {
+  jigsaw: { label: "Jigsaw", tabs: true, sizes: [[6, 3, 2], [9, 3, 3], [12, 4, 3]] },
+  slices: { label: "Slices", tabs: false, board: 4 / 3, sizes: [[3, 1, 3], [4, 1, 4], [5, 1, 5]] },
+  squares: { label: "Squares", tabs: false, sizes: [[6, 3, 2], [9, 3, 3], [12, 4, 3]] },
+};
+let mode = store.get("mode", "jigsaw"); if (!MODES[mode]) mode = "jigsaw";
+let sizeIdx = store.get("sizeIdx", { 6: 0, 9: 1, 12: 2 }[store.get("size", 6)] ?? 0); if (!(sizeIdx >= 0 && sizeIdx <= 2)) sizeIdx = 0;
 let soundOn = store.get("sound", true);
 let stars = store.get("stars", {});
 
@@ -717,15 +727,30 @@ const $ = (s) => document.querySelector(s);
 const home = $("#home"), game = $("#game");
 const STAR_SVG = `<svg class="badge" viewBox="0 0 48 48"><path d="${starD(24, 25, 22, 10)}" fill="#ffc93c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>`;
 
+const MODE_ICONS = {
+  jigsaw: `<svg viewBox="0 0 36 30"><path d="M5 9h8c-1.5-5 1-7 4-7s5.5 2 4 7h8v8c5-1.5 7 1 7 4s-2 5.5-7 4v3H5z" fill="#3b2a4a" opacity=".78"/></svg>`,
+  slices: `<svg viewBox="0 0 36 30"><rect x="3" y="2" width="30" height="7" rx="2.5" fill="#3b2a4a" opacity=".78"/><rect x="3" y="11.5" width="30" height="7" rx="2.5" fill="#3b2a4a" opacity=".78"/><rect x="3" y="21" width="30" height="7" rx="2.5" fill="#3b2a4a" opacity=".78"/></svg>`,
+  squares: `<svg viewBox="0 0 36 30"><rect x="5" y="2" width="12" height="12" rx="2.5" fill="#3b2a4a" opacity=".78"/><rect x="19" y="2" width="12" height="12" rx="2.5" fill="#3b2a4a" opacity=".78"/><rect x="5" y="16" width="12" height="12" rx="2.5" fill="#3b2a4a" opacity=".78"/><rect x="19" y="16" width="12" height="12" rx="2.5" fill="#3b2a4a" opacity=".78"/></svg>`,
+};
+function renderModes() {
+  $("#modes").innerHTML = Object.keys(MODES).map(k =>
+    `<button class="size-btn mode-btn" data-mode="${k}" aria-pressed="${k === mode}">${MODE_ICONS[k]}<span>${MODES[k].label}</span></button>`).join("");
+}
+$("#modes").addEventListener("click", (e) => {
+  const b = e.target.closest(".mode-btn"); if (!b) return;
+  mode = b.dataset.mode; store.set("mode", mode); renderModes(); renderSizes(); sfx.pick();
+});
 function renderSizes() {
-  $("#sizes").innerHTML = Object.keys(SIZES).map(n => {
-    const [c, r] = SIZES[n];
-    return `<button class="size-btn" data-size="${n}" aria-pressed="${+n === size}" aria-label="${n} pieces"><span class="mini" style="grid-template-columns:repeat(${c},9px)">${"<i></i>".repeat(c * r)}</span>${n}</button>`;
+  $("#sizes").innerHTML = MODES[mode].sizes.map(([n, c, r], i) => {
+    const icon = mode === "slices"
+      ? `<span class="mini" style="grid-template-columns:28px">${"<i class=\"bar\"></i>".repeat(r)}</span>`
+      : `<span class="mini" style="grid-template-columns:repeat(${c},9px)">${"<i></i>".repeat(c * r)}</span>`;
+    return `<button class="size-btn" data-i="${i}" aria-pressed="${i === sizeIdx}" aria-label="${n} pieces">${icon}${n}</button>`;
   }).join("");
 }
 $("#sizes").addEventListener("click", (e) => {
   const b = e.target.closest(".size-btn"); if (!b) return;
-  size = +b.dataset.size; store.set("size", size); renderSizes(); sfx.pick();
+  sizeIdx = +b.dataset.i; store.set("sizeIdx", sizeIdx); renderSizes(); sfx.pick();
 });
 function renderSound() {
   const b = $("#soundBtn");
@@ -809,11 +834,11 @@ let lastTouch = Date.now();
 let wakeLock = null;
 
 async function start(id) {
-  const art = allArt().find(a => a.id === id), [cols, rows] = SIZES[size];
+  const art = allArt().find(a => a.id === id), M = MODES[mode], [, cols, rows] = M.sizes[sizeIdx];
   if (!art) return;
-  const rand = Math.random;
-  const H = Array.from({ length: rows }, () => Array.from({ length: cols - 1 }, () => rand() < .5 ? 1 : -1));
-  const V = Array.from({ length: rows - 1 }, () => Array.from({ length: cols }, () => rand() < .5 ? 1 : -1));
+  const rand = Math.random, tab = () => M.tabs ? (rand() < .5 ? 1 : -1) : 0;
+  const H = Array.from({ length: rows }, () => Array.from({ length: cols - 1 }, tab));
+  const V = Array.from({ length: rows - 1 }, () => Array.from({ length: cols }, tab));
   const pieces = [];
   for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
     pieces.push({
@@ -822,8 +847,10 @@ async function start(id) {
     });
   }
   const slots = pieces.map((_, k) => k).sort(() => rand() - .5);
+  if (slots.every((s, k) => s === k)) slots.reverse(); // never start already in order
   pieces.forEach((p, k) => { p.slot = slots[k]; p.jx = rand() * 2 - 1; p.jy = rand() * 2 - 1; });
-  cur = { art, cols, rows, pieces, locked: 0, done: false, img: null };
+  // aspect = piece width / height (1 for square cells; wide for slices).
+  cur = { art, cols, rows, pieces, tabs: M.tabs, aspect: M.board ? M.board * rows / cols : 1, locked: 0, done: false, img: null };
 
   home.hidden = true; game.hidden = false;
   doneBar.hidden = true; full.classList.remove("show"); ghost.classList.remove("cheer");
@@ -840,18 +867,22 @@ async function start(id) {
 function layout() {
   if (!cur || !cur.img) return;
   const W = game.clientWidth, Hh = game.clientHeight, m = 20, topRes = 96;
-  const { cols, rows, pieces } = cur, n = pieces.length;
+  const { cols, rows, pieces, aspect: a } = cur, n = pieces.length;
   const land = W >= Hh * 1.05;
-  const split = land ? .6 : .56;
+  const split = land ? (a > 1.5 ? .52 : .6) : .56; // wide strips get a wider tray
   const boardA = land ? { x: m, y: topRes, w: W * split - m * 1.5, h: Hh - topRes - m } : { x: m, y: topRes, w: W - 2 * m, h: Hh * split - topRes };
   const tray = land ? { x: W * split + m * .5, y: 24, w: W * (1 - split) - m * 1.5, h: Hh - 24 - m } : { x: m, y: Hh * split + 14, w: W - 2 * m, h: Hh * (1 - split) - 14 - m };
+  // best.s is the largest piece height whose pieces fit the tray's grid of slots.
   let best = { s: 0, gc: 1, gr: n };
-  for (let gc = 1; gc <= n; gc++) { const gr = Math.ceil(n / gc), s = Math.min(tray.w / gc, tray.h / gr); if (s > best.s) best = { s, gc, gr }; }
-  const cell = Math.floor(Math.max(40, Math.min(boardA.w / cols, boardA.h / rows, best.s * 1.12, 270)));
-  const BW = cell * cols, BH = cell * rows;
+  for (let gc = 1; gc <= n; gc++) { const gr = Math.ceil(n / gc), s = Math.min(tray.w / gc / a, tray.h / gr); if (s > best.s) best = { s, gc, gr }; }
+  const ph = Math.floor(Math.max(30, Math.min(boardA.w / (cols * a), boardA.h / rows, best.s * 1.12, 270, 900 / a)));
+  const pw = Math.round(ph * a);
+  const BW = pw * cols, BH = ph * rows, small = Math.min(pw, ph);
   const bx = Math.round(boardA.x + (boardA.w - BW) / 2), by = Math.round(boardA.y + (boardA.h - BH) / 2);
-  const pad = Math.ceil(cell * .3), dpr = Math.min(window.devicePixelRatio || 1, 2);
-  L = { W, H: Hh, cell, pad, bx, by, BW, BH, tray, best, dpr };
+  const pad = cur.tabs ? Math.ceil(small * .3) : Math.ceil(small * .08) + 4, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  // Snap distance: generous, and longer along a piece's long side (strips).
+  const snapX = small * .6 + (pw - small) * .15, snapY = small * .6 + (ph - small) * .15;
+  L = { W, H: Hh, pw, ph, pad, bx, by, BW, BH, tray, best, dpr, snapX, snapY };
 
   // Scene: picture cropped to the board ("cover").
   const scene = document.createElement("canvas");
@@ -869,27 +900,26 @@ function layout() {
   g.fillStyle = "#fffaf3"; g.fillRect(0, 0, BW, BH);
   g.globalAlpha = .32; g.drawImage(scene, 0, 0, BW, BH); g.globalAlpha = 1;
   g.strokeStyle = "rgba(255,255,255,.95)"; g.lineWidth = 3;
-  pieces.forEach(p => g.stroke(piecePath(cell, cell, p.tabs, p.c * cell, p.r * cell)));
+  pieces.forEach(p => g.stroke(piecePath(pw, ph, p.tabs, p.c * pw, p.r * ph)));
   g.strokeStyle = "rgba(92,52,96,.18)"; g.lineWidth = 1;
-  pieces.forEach(p => g.stroke(piecePath(cell, cell, p.tabs, p.c * cell, p.r * cell)));
+  pieces.forEach(p => g.stroke(piecePath(pw, ph, p.tabs, p.c * pw, p.r * ph)));
 
   // Finished picture shown on top at the end.
   const fc = sizeCanvas(full, BW, BH);
   full.style.transform = `translate(${bx}px, ${by}px)`;
   fc.drawImage(scene, 0, 0, BW, BH);
 
-  slot.style.width = cell + "px"; slot.style.height = cell + "px";
+  slot.style.width = pw + "px"; slot.style.height = ph + "px";
 
-  const cw = cell + pad * 2;
   pieces.forEach(p => {
-    const c = sizeCanvas(p.cv, cw, cw);
-    const path = piecePath(cell, cell, p.tabs, pad, pad);
+    const c = sizeCanvas(p.cv, pw + pad * 2, ph + pad * 2);
+    const path = piecePath(pw, ph, p.tabs, pad, pad);
     c.save(); c.clip(path);
-    c.drawImage(scene, pad - p.c * cell, pad - p.r * cell, BW, BH);
+    c.drawImage(scene, pad - p.c * pw, pad - p.r * ph, BW, BH);
     c.lineWidth = 5; c.strokeStyle = "rgba(255,255,255,.55)"; c.stroke(path);
     c.restore();
     c.lineWidth = 1.5; c.strokeStyle = "rgba(70,35,80,.35)"; c.stroke(path);
-    p.tx = bx + p.c * cell; p.ty = by + p.r * cell;
+    p.tx = bx + p.c * pw; p.ty = by + p.r * ph;
     if (p.locked) { p.x = p.tx; p.y = p.ty; } else { const s = slotPos(p); p.x = s.x; p.y = s.y; }
     p.el.style.zIndex = p.locked ? 2 : (p.z || (p.z = ++zTop));
     place(p);
@@ -899,13 +929,14 @@ function layout() {
 }
 
 function slotPos(p) {
-  const { tray, best, cell, W, H } = L;
+  const { tray, best, pw, ph, W, H } = L;
   const sw = tray.w / best.gc, sh = tray.h / best.gr;
   const col = p.slot % best.gc, row = Math.floor(p.slot / best.gc);
-  const cx = tray.x + sw * (col + .5) + p.jx * Math.max(0, sw - cell) * .35;
-  const cy = tray.y + sh * (row + .5) + p.jy * Math.max(0, sh - cell) * .35;
-  return { x: clamp(cx - cell / 2, 6, W - cell - 6), y: clamp(cy - cell / 2, 6, H - cell - 6) };
+  const cx = tray.x + sw * (col + .5) + p.jx * Math.max(0, sw - pw) * .35;
+  const cy = tray.y + sh * (row + .5) + p.jy * Math.max(0, sh - ph) * .35;
+  return { x: clamp(cx - pw / 2, 6, W - pw - 6), y: clamp(cy - ph / 2, 6, H - ph - 6) };
 }
+const nearTarget = (p) => Math.abs(p.x - p.tx) < L.snapX && Math.abs(p.y - p.ty) < L.snapY;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const place = (p) => { p.el.style.transform = `translate3d(${p.x - L.pad}px, ${p.y - L.pad}px, 0)`; };
 function animateTo(p, x, y, done) {
@@ -922,11 +953,11 @@ const drags = new Map();
 game.addEventListener("pointerdown", (e) => {
   lastTouch = Date.now();
   if (!cur || cur.done || !L || e.target.closest("button")) return;
-  const { pad, cell } = L, tol = pad * .75;
+  const { pad, pw, ph } = L, tol = Math.max(pad * .75, 12);
   let hit = null;
   for (const p of cur.pieces) {
     if (p.locked || p.dragging) continue;
-    if (e.clientX >= p.x - tol && e.clientX <= p.x + cell + tol && e.clientY >= p.y - tol && e.clientY <= p.y + cell + tol) {
+    if (e.clientX >= p.x - tol && e.clientX <= p.x + pw + tol && e.clientY >= p.y - tol && e.clientY <= p.y + ph + tol) {
       if (!hit || p.z > hit.z) hit = p;
     }
   }
@@ -941,20 +972,20 @@ game.addEventListener("pointerdown", (e) => {
 game.addEventListener("pointermove", (e) => {
   const d = drags.get(e.pointerId); if (!d) return;
   e.preventDefault();
-  const p = d.p, { cell, W, H } = L;
-  p.x = clamp(e.clientX - d.ox, -cell * .4, W - cell * .6);
-  p.y = clamp(e.clientY - d.oy, -cell * .4, H - cell * .6);
+  const p = d.p, { pw, ph, W, H } = L;
+  p.x = clamp(e.clientX - d.ox, -pw * .4, W - pw * .6);
+  p.y = clamp(e.clientY - d.oy, -ph * .4, H - ph * .6);
   place(p);
-  showSlot(p, Math.hypot(p.x - p.tx, p.y - p.ty) < cell * .6);
+  showSlot(p, nearTarget(p));
 });
 const endDrag = (e) => {
   const d = drags.get(e.pointerId); if (!d) return;
   drags.delete(e.pointerId);
-  const p = d.p, { cell, bx, by, BW, BH } = L;
+  const p = d.p, { pw, ph, bx, by, BW, BH } = L;
   p.dragging = false; p.el.classList.remove("lifted");
   showSlot(p, false);
-  if (Math.hypot(p.x - p.tx, p.y - p.ty) < cell * .6) return lock(p);
-  const cx = p.x + cell / 2, cy = p.y + cell / 2;
+  if (nearTarget(p)) return lock(p);
+  const cx = p.x + pw / 2, cy = p.y + ph / 2;
   if (cx > bx && cx < bx + BW && cy > by && cy < by + BH) { const s = slotPos(p); animateTo(p, s.x, s.y); }
 };
 game.addEventListener("pointerup", endDrag);
@@ -964,7 +995,7 @@ function lock(p) {
   p.locked = true; p.el.classList.add("locked"); p.el.style.zIndex = 2;
   sfx.snap(cur.locked);
   cur.locked++;
-  animateTo(p, p.tx, p.ty, () => burst(p.tx + L.cell / 2, p.ty + L.cell / 2, 14, 1));
+  animateTo(p, p.tx, p.ty, () => burst(p.tx + L.pw / 2, p.ty + L.ph / 2, 14, 1));
   if (cur.locked === cur.pieces.length) win();
 }
 
@@ -1044,7 +1075,9 @@ document.addEventListener("gesturestart", (e) => e.preventDefault());
 game.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
 document.addEventListener("dblclick", (e) => e.preventDefault());
 
-renderSizes(); renderSound(); renderShelves();
+// Automated tests open the page with #selftest to read piece targets.
+if (location.hash === "#selftest") window.__pp = { get cur() { return cur; }, get L() { return L; } };
+renderModes(); renderSizes(); renderSound(); renderShelves();
 loadPhotos().then(() => { if (photoArt.length) renderShelves(); });
 })();
 </script>
