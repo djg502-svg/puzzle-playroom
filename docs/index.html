@@ -501,9 +501,83 @@ const castle = () => {
     unicornAt(408, 280, .4) + unicornAt(72, 286, .36);
 };
 
+/* ---- Dinosaurs (drawn facing right around (0,0)) ---- */
+const palm = (x, y, s) => at(x, y, s,
+  `<path d="M0 0 Q-6 -60 6 -120" stroke="#9b6a43" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M-4 -30 h12 M-3 -60 h12 M0 -90 h11" stroke="#7d5232" stroke-width="3" stroke-linecap="round"/>` +
+  [-150, -105, -60, -15, 30].map(a => `<ellipse cx="6" cy="-120" rx="46" ry="13" fill="#4cb85f" transform="rotate(${a} 6 -120) translate(40 0)"/>`).join("") + `<circle cx="6" cy="-120" r="9" fill="#8a5a3c"/>`);
+const volcano = (x, y, s) => at(x, y, s,
+  `<circle cx="10" cy="-150" r="20" fill="#e3dde9"/><circle cx="-14" cy="-176" r="15" fill="#ece7f1"/><circle cx="16" cy="-196" r="11" fill="#f3f0f7"/>` +
+  `<path d="M-100 0 L-26 -120 L26 -120 L100 0Z" fill="#b08a74"/><path d="M-26 -120 L26 -120 L18 -106 Q10 -84 4 -100 Q-2 -78 -10 -98 Q-16 -86 -20 -108Z" fill="#ff8a4c"/>`);
+const brachio = (c, spot) =>
+  `<path d="M-58 36 Q-118 46 -150 82 Q-104 66 -56 62Z" fill="${c}"/>` +
+  `<rect x="-50" y="54" width="22" height="46" rx="10" fill="${c}"/><rect x="34" y="54" width="22" height="46" rx="10" fill="${c}"/>` +
+  `<path d="M36 20 Q66 -40 90 -100" stroke="${c}" stroke-width="34" fill="none" stroke-linecap="round"/>` +
+  `<ellipse cx="0" cy="38" rx="72" ry="42" fill="${c}"/><rect x="-26" y="56" width="22" height="46" rx="10" fill="${c}"/><rect x="12" y="56" width="22" height="46" rx="10" fill="${c}"/>` +
+  `<ellipse cx="-20" cy="20" rx="12" ry="8" fill="${spot}"/><ellipse cx="10" cy="12" rx="9" ry="6" fill="${spot}"/><ellipse cx="-44" cy="34" rx="8" ry="6" fill="${spot}"/>` +
+  `<ellipse cx="104" cy="-108" rx="32" ry="21" fill="${c}"/>` + eye(108, -114, 6) + cheek(116, -98) +
+  `<path d="M118 -96 Q126 -92 132 -98" stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="130" cy="-114" r="2.5" fill="${INK}"/>`;
+const triceratops = (c, frill) =>
+  `<path d="M-70 10 Q-122 22 -138 46 Q-100 36 -68 40Z" fill="${c}"/>` +
+  `<rect x="-52" y="40" width="26" height="40" rx="11" fill="${c}"/><rect x="30" y="40" width="26" height="40" rx="11" fill="${c}"/>` +
+  `<ellipse cx="0" cy="18" rx="78" ry="48" fill="${c}"/><rect x="-26" y="44" width="26" height="40" rx="11" fill="${c}"/><rect x="10" y="44" width="26" height="40" rx="11" fill="${c}"/>` +
+  `<circle cx="74" cy="-22" r="48" fill="${frill}"/>${Array.from({ length: 9 }, (_, i) => { const a = Math.PI * (.9 + i * .15); return `<circle cx="${f1(74 + 40 * Math.cos(a))}" cy="${f1(-22 + 40 * Math.sin(a))}" r="5" fill="#fff" opacity=".6"/>`; }).join("")}` +
+  `<path d="M90 -22 L128 -66 L104 -18Z M110 -18 L152 -54 L122 -10Z" fill="#fff4dc" stroke="#e8d3a8" stroke-width="2" stroke-linejoin="round"/>` +
+  `<ellipse cx="100" cy="2" rx="42" ry="31" fill="${c}"/><path d="M132 -6 L148 -20 L140 4Z" fill="#fff4dc" stroke="#e8d3a8" stroke-width="2" stroke-linejoin="round"/>` +
+  eye(104, -6, 7) + cheek(110, 14) + `<path d="M116 18 Q128 26 140 14" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+const trex = (c, belly) =>
+  `<path d="M-30 58 Q-110 92 -152 72 Q-100 58 -36 26Z" fill="${c}"/>` +
+  `<ellipse cx="-18" cy="76" rx="22" ry="34" fill="${c}"/><ellipse cx="-12" cy="108" rx="24" ry="9" fill="${c}"/>` +
+  `<ellipse cx="0" cy="30" rx="52" ry="66" fill="${c}" transform="rotate(-18 0 30)"/><ellipse cx="14" cy="40" rx="28" ry="46" fill="${belly}" transform="rotate(-18 14 40)"/>` +
+  `<ellipse cx="22" cy="78" rx="22" ry="34" fill="${c}"/><ellipse cx="30" cy="110" rx="24" ry="9" fill="${c}"/>` +
+  `<path d="M38 4 q14 4 16 14 M34 16 q12 6 12 16" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"/>` +
+  `<circle cx="-30" cy="-8" r="7" fill="${belly}" opacity=".7"/><circle cx="-38" cy="16" r="5" fill="${belly}" opacity=".7"/>` +
+  `<ellipse cx="44" cy="-62" rx="58" ry="40" fill="${c}"/>` +
+  `<path d="M58 -40 Q80 -30 100 -44" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M66 -38 l4 8 l4 -7 M80 -36 l4 8 l4 -8" fill="#fff" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>` +
+  eye(54, -78, 9) + cheek(66, -56) + `<circle cx="94" cy="-70" r="3" fill="${INK}"/>`;
+const stego = (c, plate) =>
+  [[-50, -10], [-26, -30], [2, -38], [30, -32], [54, -14]].map(([x, y], i) => `<path d="M${x - 16} ${y + 20} L${x} ${y - 18 - (i === 2 ? 8 : 0)} L${x + 16} ${y + 20}Z" fill="${plate}" stroke="${plate}" stroke-width="6" stroke-linejoin="round"/>`).join("") +
+  `<path d="M-66 20 Q-120 26 -148 6 Q-118 44 -64 42Z" fill="${c}"/><path d="M-134 10 l-8 -18 M-120 18 l-4 -20" stroke="${plate}" stroke-width="7" stroke-linecap="round"/>` +
+  `<rect x="-48" y="40" width="24" height="40" rx="10" fill="${c}"/><rect x="28" y="40" width="24" height="40" rx="10" fill="${c}"/>` +
+  `<ellipse cx="0" cy="22" rx="76" ry="42" fill="${c}"/><rect x="-24" y="46" width="24" height="38" rx="10" fill="${c}"/><rect x="8" y="46" width="24" height="38" rx="10" fill="${c}"/>` +
+  `<ellipse cx="88" cy="34" rx="28" ry="20" fill="${c}"/>` + eye(92, 28, 6) + cheek(98, 42) + `<path d="M104 44 Q110 48 116 42" stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+const ptero = (c) =>
+  `<path d="M-8 0 Q-60 -40 -96 -6 Q-56 -14 -8 12Z M8 0 Q60 -40 96 -6 Q56 -14 8 12Z" fill="${c}"/>` +
+  `<ellipse cx="0" cy="8" rx="14" ry="22" fill="${c}"/><ellipse cx="6" cy="-20" rx="14" ry="12" fill="${c}"/>` +
+  `<path d="M-4 -26 L-26 -40 L-2 -32Z" fill="${c}"/><path d="M16 -22 L44 -16 L16 -14Z" fill="#ffc93c"/>` + eye(8, -22, 4);
+const egg = (x, y, s, c) => at(x, y, s, `<ellipse cx="0" cy="0" rx="34" ry="44" fill="${c}"/><circle cx="-12" cy="-14" r="5" fill="#fff" opacity=".6"/><circle cx="10" cy="8" r="6" fill="#fff" opacity=".5"/><circle cx="-6" cy="22" r="4" fill="#fff" opacity=".5"/>`);
+const dinoBg = () => sky("#c9f0ff", "#fff7d6") + cloud(400, 54, .8) + volcano(390, 250, .9) +
+  `<path d="M0 230 Q120 204 240 222 T480 214 V360 H0Z" fill="#b9e47e"/><path d="M0 286 Q140 268 262 290 T480 282 V360 H0Z" fill="#9bd165"/>`;
+
+const longNeck = () => dinoBg() + palm(70, 290, 1.1) + palm(440, 300, .8) +
+  flower(130, 330, "#ff8fc8") + flower(400, 336, "#fff") + at(222, 212, 1, brachio("#7cc8ff", "#b6e1ff"));
+const triScene = () => dinoBg() + palm(450, 296, 1) + flower(70, 316, "#ffc93c") + flower(110, 340, "#ff8fc8") + flower(420, 336, "#b98cff") +
+  at(206, 232, 1.05, triceratops("#7fc8a9", "#f6a96b"));
+const trexScene = () => dinoBg() + palm(54, 300, 1) +
+  at(200, 196, 1, trex("#9ad06a", "#e7f6c2")) + at(372, 286, .45, triceratops("#ffb86b", "#ff8fc8")) + flower(450, 334, "#fff");
+const hatching = () => {
+  const r = rng(71); let leaves = "";
+  for (let i = 0; i < 9; i++) { const x = r() * 480, a = Math.round(r() * 360); leaves += `<ellipse cx="${f1(x)}" cy="${f1(40 + r() * 160)}" rx="40" ry="14" fill="${["#8fd16a", "#6cbf4f", "#a7e07a"][i % 3]}" transform="rotate(${a} ${f1(x)} 120)"/>`; }
+  return sky("#d7f5c8", "#fff6d9") + leaves + sun(410, 64, 26) +
+    `<path d="M0 270 Q240 250 480 270 V360 H0Z" fill="#a7e07a"/>` +
+    `<ellipse cx="240" cy="300" rx="170" ry="46" fill="#a9784f"/><g stroke="#8a5a3c" stroke-width="5" stroke-linecap="round"><path d="M90 296 L160 280 M120 314 L200 300 M280 300 L370 284 M300 316 L390 306 M200 322 L280 318"/></g>` +
+    `<ellipse cx="240" cy="290" rx="140" ry="30" fill="#7d5232"/>` +
+    egg(150, 262, 1, "#bfe7fb") + egg(334, 262, 1, "#ffd6e6") +
+    `<ellipse cx="240" cy="210" rx="44" ry="40" fill="#9ad06a"/><ellipse cx="240" cy="226" rx="26" ry="18" fill="#e7f6c2"/>` + eye(224, 204, 8) + eye(256, 204, 8) + cheek(214, 222) + cheek(266, 222) + smile(240, 226, 9) +
+    `<path d="M196 182 L210 168 L222 182 L236 166 L250 182 L264 166 L276 182 L286 170 Q296 140 240 132 Q186 140 196 182Z" fill="#fff6c9"/>` +
+    `<path d="M192 240 L206 226 L220 242 L234 226 L248 242 L262 226 L276 242 L290 228 Q300 300 240 304 Q180 300 192 240Z" fill="#fff6c9"/><circle cx="216" cy="270" r="6" fill="#fff" opacity=".7"/><circle cx="262" cy="282" r="5" fill="#fff" opacity=".7"/>`;
+};
+const dinoFriends = () => sky("#cdeeff", "#fff3e0") + cloud(90, 60, .9) + volcano(420, 236, .7) +
+  `<path d="M0 226 Q120 206 240 220 T480 212 V360 H0Z" fill="#b9e47e"/>` +
+  `<ellipse cx="380" cy="262" rx="110" ry="26" fill="#7cc8ff"/><ellipse cx="380" cy="262" rx="80" ry="15" fill="none" stroke="#a6dcff" stroke-width="4"/>` +
+  at(384, 224, .42, brachio("#ffb86b", "#ffd9a8")) +
+  `<path d="M0 290 Q140 272 262 294 T480 286 V360 H0Z" fill="#9bd165"/>` + palm(36, 300, .9) +
+  at(196, 248, .95, stego("#b39ddb", "#ff9f6b")) + at(310, 96, .8, ptero("#ff8fc8")) + at(140, 70, .45, ptero("#6fc2ff")) +
+  flower(320, 330, "#fff") + flower(440, 334, "#ffc93c");
+
 const THEMES = [
   { key: "photos", label: "My photos", tone: "#ff5d8f" },
   { key: "animals", label: "Animals", tone: "#f2952f" },
+  { key: "dinos", label: "Dinosaurs", tone: "#3fae6a" },
   { key: "icecream", label: "Ice cream", tone: "#4cc79c" },
   { key: "unicorns", label: "Unicorns", tone: "#b98cff" },
 ];
@@ -515,6 +589,11 @@ const ART = [
   { id: "pond", name: "Ducks and frog", theme: "animals", draw: pond },
   { id: "sea", name: "Under the sea", theme: "animals", draw: sea },
   { id: "elephant", name: "Elephant and bird", theme: "animals", draw: elephantScene },
+  { id: "longneck", name: "Long-neck dinosaur", theme: "dinos", draw: longNeck },
+  { id: "tri", name: "Triceratops", theme: "dinos", draw: triScene },
+  { id: "trex", name: "T-rex and friend", theme: "dinos", draw: trexScene },
+  { id: "hatch", name: "Baby dinosaur", theme: "dinos", draw: hatching },
+  { id: "dinofriends", name: "Dinosaur friends", theme: "dinos", draw: dinoFriends },
   { id: "cone", name: "Ice cream", theme: "icecream", draw: iceCream },
   { id: "popsicle", name: "Popsicle", theme: "icecream", draw: popsicle },
   { id: "sundae", name: "Sundae", theme: "icecream", draw: sundae },
