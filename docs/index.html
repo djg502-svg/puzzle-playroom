@@ -97,6 +97,29 @@ h1 span:nth-child(2) { color: var(--ink); }
   position: absolute; top: 8px; right: 8px; width: 44px; height: 44px;
   filter: drop-shadow(0 2px 2px rgba(0,0,0,.25));
 }
+/* My photos: press-and-hold controls so a toddler can't add or remove by accident */
+.card-wrap { position: relative; display: grid; }
+.card.holding { transform: scale(.96); }
+.add-card { display: grid; place-items: center; align-content: center; gap: 4px; border: 5px dashed #ffb3cc; background: var(--card); }
+.ring { width: 84px; height: 84px; }
+.ring .prog { stroke-dasharray: 239; stroke-dashoffset: 239; transition: stroke-dashoffset .15s; }
+.add-card.holding .ring .prog { stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; }
+.add-card .hint { font-size: 17px; font-weight: 600; opacity: .75; }
+.pick, .del {
+  position: absolute; z-index: 2; display: none; place-items: center; border: 4px solid var(--card);
+  box-shadow: 0 5px 0 var(--shadow); font-family: var(--display); cursor: pointer;
+}
+.pick {
+  inset: 50% auto auto 50%; transform: translate(-50%, -50%); padding: 12px 26px; border-radius: 999px;
+  background: var(--berry); color: #fff; font-size: 22px; font-weight: 800; white-space: nowrap;
+}
+.card-wrap.open .pick { display: grid; animation: popin .3s cubic-bezier(.3,1.6,.5,1); }
+.card-wrap.open .add-card .ring, .card-wrap.open .add-card .hint { visibility: hidden; }
+.del { top: 10px; left: 10px; width: 66px; height: 66px; border-radius: 50%; background: #ff5d5d; padding: 0; }
+.del svg { width: 34px; height: 34px; }
+.card-wrap.editing .del { display: grid; animation: popin .3s cubic-bezier(.3,1.6,.5,1); }
+.card-wrap.editing .card img { opacity: .55; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
 .note { margin: 0; font-family: system-ui, sans-serif; font-size: 14px; opacity: .7; max-width: 60ch; }
 
 /* ---------- Game ---------- */
@@ -163,7 +186,8 @@ h1 span:nth-child(2) { color: var(--ink); }
       </div>
     </div>
     <div id="shelves" class="wrap"></div>
-    <p class="note">Tap a picture to start. Pieces snap into place when they get close. Finished puzzles earn a star.</p>
+    <p class="note">Tap a picture to start. Pieces snap into place when they get close. Finished puzzles earn a star. Grown-ups: press and hold the + card to add photos from this iPad, or hold a photo to remove it. Photos stay on this device.</p>
+    <input type="file" id="photoInput" class="visually-hidden" accept="image/*" multiple tabindex="-1">
   </div>
 </main>
 
@@ -478,6 +502,7 @@ const castle = () => {
 };
 
 const THEMES = [
+  { key: "photos", label: "My photos", tone: "#ff5d8f" },
   { key: "animals", label: "Animals", tone: "#f2952f" },
   { key: "icecream", label: "Ice cream", tone: "#4cc79c" },
   { key: "unicorns", label: "Unicorns", tone: "#b98cff" },
@@ -507,7 +532,85 @@ ART.forEach(a => {
   a.url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
 });
 const imgCache = {};
-const loadArt = (a) => imgCache[a.id] || (imgCache[a.id] = new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = a.url; }));
+const loadImg = (url) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+const loadArt = (a) => imgCache[a.id] || (imgCache[a.id] = loadImg(a.url));
+
+/* ================= My photos (kept in this browser's IndexedDB, never uploaded) ================= */
+let photoArt = [];
+const allArt = () => photoArt.concat(ART);
+let dbp = null;
+function db() {
+  return dbp || (dbp = new Promise((res, rej) => {
+    const req = indexedDB.open("puzzle-playroom", 1);
+    req.onupgradeneeded = () => req.result.createObjectStore("photos", { keyPath: "id" });
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  }));
+}
+async function photoStore(mode, fn) {
+  const d = await db();
+  return new Promise((res, rej) => {
+    const tx = d.transaction("photos", mode), r = fn(tx.objectStore("photos"));
+    tx.oncomplete = () => res(r && r.result);
+    tx.onerror = () => rej(tx.error);
+  });
+}
+const toArt = (rec) => ({ id: "photo-" + rec.id, photoId: rec.id, name: "", theme: "photos", url: URL.createObjectURL(rec.blob) });
+async function loadPhotos() {
+  try {
+    const recs = (await photoStore("readonly", s => s.getAll())) || [];
+    photoArt = recs.sort((a, b) => b.added - a.added).map(toArt);
+  } catch (e) { photoArt = []; }
+}
+// Shrink big camera photos so puzzles stay quick and storage stays small.
+async function shrink(file) {
+  const src = URL.createObjectURL(file);
+  try {
+    const img = await loadImg(src), max = 1600;
+    const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return await new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("encode")), "image/jpeg", .88));
+  } finally { URL.revokeObjectURL(src); }
+}
+async function addPhotos(files) {
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) { }
+  for (const file of files) {
+    try {
+      const rec = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), added: Date.now(), blob: await shrink(file) };
+      try { await photoStore("readwrite", s => s.put(rec)); } catch (e) { /* storage unavailable: keep it for this session only */ }
+      photoArt.unshift(toArt(rec));
+    } catch (e) { /* skip files that aren't readable images */ }
+  }
+  renderShelves();
+}
+async function removePhoto(photoId) {
+  const a = photoArt.find(p => p.photoId === photoId); if (!a) return;
+  try { await photoStore("readwrite", s => s.delete(photoId)); } catch (e) { }
+  photoArt = photoArt.filter(p => p !== a);
+  URL.revokeObjectURL(a.url); delete imgCache[a.id];
+  delete stars[a.id]; store.set("stars", stars);
+  renderShelves();
+}
+
+// Press-and-hold: a quick tap does onTap; holding about a second does onHold.
+const HOLD_MS = 1000;
+function holdable(el, { onTap, onHold }) {
+  let t = 0, active = false, armed = false, sx = 0, sy = 0;
+  const reset = () => { clearTimeout(t); active = armed = false; el.classList.remove("holding"); };
+  el.addEventListener("pointerdown", (e) => {
+    if (e.button) return;
+    active = true; armed = false; sx = e.clientX; sy = e.clientY; el.classList.add("holding");
+    t = setTimeout(() => { armed = true; el.classList.remove("holding"); onHold(); }, HOLD_MS);
+  });
+  el.addEventListener("pointermove", (e) => { if (active && Math.hypot(e.clientX - sx, e.clientY - sy) > 14) reset(); });
+  el.addEventListener("pointerup", () => { if (!active) return; const held = armed; reset(); if (!held && onTap) onTap(); });
+  el.addEventListener("pointercancel", reset);
+  el.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse" && !armed) reset(); });
+  el.addEventListener("contextmenu", (e) => e.preventDefault());
+  el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); (onTap || onHold)(); } });
+}
 
 /* ================= Settings & storage ================= */
 const store = {
@@ -571,18 +674,47 @@ function renderSound() {
 }
 $("#soundBtn").addEventListener("click", () => { soundOn = !soundOn; store.set("sound", soundOn); renderSound(); sfx.pick(); });
 
+const TRASH_SVG = `<svg viewBox="0 0 48 48"><path d="M12 15h24l-2 25a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3z" fill="#fff"/><path d="M8 13h32M19 13V8h10v5" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+const ADD_CARD = `<div class="card-wrap" id="addWrap">
+  <button class="card add-card" id="addCard" aria-label="Press and hold to add a photo">
+    <svg class="ring" viewBox="0 0 84 84"><circle cx="42" cy="42" r="38" fill="none" stroke="#ffe0ea" stroke-width="7"/><circle class="prog" cx="42" cy="42" r="38" fill="none" stroke="#ff5d8f" stroke-width="7" stroke-linecap="round" transform="rotate(-90 42 42)"/><path d="M42 27v30M27 42h30" stroke="#ff5d8f" stroke-width="7" stroke-linecap="round"/></svg>
+    <span class="hint">Hold to add a photo</span>
+  </button>
+  <label class="pick" for="photoInput">Choose photo</label>
+</div>`;
+let pickTimer = 0;
 function renderShelves() {
-  $("#shelves").innerHTML = THEMES.map(t => `
-    <section class="shelf" style="--tone:${t.tone}">
-      <h2>${t.label}</h2>
-      <div class="cards">${ART.map((a, i) => a.theme !== t.key ? "" :
-        `<button class="card" data-i="${i}" aria-label="${a.name} puzzle"><img src="${a.url}" alt="" draggable="false">${stars[a.id] ? STAR_SVG : ""}</button>`).join("")}</div>
-    </section>`).join("");
+  $("#shelves").innerHTML = THEMES.map(t => {
+    const cards = allArt().filter(a => a.theme === t.key).map(a => a.photoId
+      ? `<div class="card-wrap"><button class="card photo" data-id="${a.id}" aria-label="Photo puzzle. Press and hold to remove."><img src="${a.url}" alt="" draggable="false">${stars[a.id] ? STAR_SVG : ""}</button><button class="del" data-photo="${a.photoId}" aria-label="Remove this photo">${TRASH_SVG}</button></div>`
+      : `<button class="card" data-id="${a.id}" aria-label="${a.name} puzzle"><img src="${a.url}" alt="" draggable="false">${stars[a.id] ? STAR_SVG : ""}</button>`).join("");
+    return `<section class="shelf" style="--tone:${t.tone}"><h2>${t.label}</h2><div class="cards">${t.key === "photos" ? ADD_CARD : ""}${cards}</div></section>`;
+  }).join("");
+  // Hold the + card, then tap "Choose photo" (a plain tap on a file label is what iPadOS trusts to open Photos).
+  holdable($("#addCard"), { onHold: () => { const w = $("#addWrap"); w.classList.add("open"); clearTimeout(pickTimer); pickTimer = setTimeout(() => w.classList.remove("open"), 8000); } });
+  document.querySelectorAll(".card.photo").forEach(el => holdable(el, {
+    onTap: () => { audio(); start(el.dataset.id); },
+    onHold: () => el.parentElement.classList.add("editing"),
+  }));
 }
 $("#shelves").addEventListener("click", (e) => {
-  const b = e.target.closest(".card"); if (!b) return;
+  const del = e.target.closest(".del");
+  if (del) { removePhoto(del.dataset.photo); return; }
+  const b = e.target.closest(".card");
+  if (!b || b.classList.contains("photo") || b.classList.contains("add-card")) return;
   audio(); // unlock audio on iPad from this tap
-  start(+b.dataset.i);
+  start(b.dataset.id);
+});
+// Tapping anywhere else closes the photo controls.
+document.addEventListener("pointerdown", (e) => {
+  if (e.target.closest(".del, .pick, .card-wrap.editing .card")) return;
+  document.querySelectorAll(".card-wrap.editing").forEach(w => w.classList.remove("editing"));
+  const w = $("#addWrap"); if (w && !e.target.closest("#addWrap")) w.classList.remove("open");
+});
+$("#photoInput").addEventListener("change", (e) => {
+  const files = [...e.target.files]; e.target.value = "";
+  const w = $("#addWrap"); if (w) w.classList.remove("open");
+  if (files.length) addPhotos(files);
 });
 
 /* ================= Jigsaw geometry ================= */
@@ -614,8 +746,9 @@ let zTop = 10;
 let lastTouch = Date.now();
 let wakeLock = null;
 
-async function start(i) {
-  const art = ART[i], [cols, rows] = SIZES[size];
+async function start(id) {
+  const art = allArt().find(a => a.id === id), [cols, rows] = SIZES[size];
+  if (!art) return;
   const rand = Math.random;
   const H = Array.from({ length: rows }, () => Array.from({ length: cols - 1 }, () => rand() < .5 ? 1 : -1));
   const V = Array.from({ length: rows - 1 }, () => Array.from({ length: cols }, () => rand() < .5 ? 1 : -1));
@@ -628,7 +761,7 @@ async function start(i) {
   }
   const slots = pieces.map((_, k) => k).sort(() => rand() - .5);
   pieces.forEach((p, k) => { p.slot = slots[k]; p.jx = rand() * 2 - 1; p.jy = rand() * 2 - 1; });
-  cur = { i, art, cols, rows, pieces, locked: 0, done: false, img: null };
+  cur = { art, cols, rows, pieces, locked: 0, done: false, img: null };
 
   home.hidden = true; game.hidden = false;
   doneBar.hidden = true; full.classList.remove("show"); ghost.classList.remove("cheer");
@@ -637,7 +770,7 @@ async function start(i) {
   zTop = 10; lastTouch = Date.now();
   try { wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) { wakeLock = null; }
   const token = cur;
-  cur.img = await loadArt(art);
+  try { cur.img = await loadArt(art); } catch (e) { if (cur === token) goHome(); return; }
   if (cur !== token) return;
   layout();
 }
@@ -662,7 +795,8 @@ function layout() {
   const scene = document.createElement("canvas");
   scene.width = BW * dpr; scene.height = BH * dpr;
   const sc = scene.getContext("2d"); sc.scale(dpr, dpr);
-  const k = Math.max(BW / 480, BH / 360), dw = 480 * k, dh = 360 * k;
+  const iw = cur.img.naturalWidth || 480, ih = cur.img.naturalHeight || 360;
+  const k = Math.max(BW / iw, BH / ih), dw = iw * k, dh = ih * k;
   sc.drawImage(cur.img, (BW - dw) / 2, (BH - dh) / 2, dw, dh);
 
   const sizeCanvas = (cv, w, h) => { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.width = w + "px"; cv.style.height = h + "px"; const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0); return c; };
@@ -781,7 +915,7 @@ function win() {
     full.classList.add("show");
     ghost.classList.add("cheer"); full.classList.add("cheer");
     sfx.win();
-    speak(`Yay! You did it! ${cur.art.name}!`);
+    speak(cur.art.name ? `Yay! You did it! ${cur.art.name}!` : "Yay! You did it!");
     for (let k = 0; k < 4; k++) setTimeout(() => burst(L.W * (.2 + .2 * k), L.H * .35, 40, 2.2), k * 180);
   }, 380);
   setTimeout(() => { if (cur === token) doneBar.hidden = false; }, 1500);
@@ -834,8 +968,12 @@ function goHome() {
 }
 $("#homeBtn").addEventListener("click", goHome);
 $("#doneHomeBtn").addEventListener("click", goHome);
-$("#againBtn").addEventListener("click", () => cur && start(cur.i));
-$("#nextBtn").addEventListener("click", () => cur && start((cur.i + 1) % ART.length));
+$("#againBtn").addEventListener("click", () => cur && start(cur.art.id));
+$("#nextBtn").addEventListener("click", () => {
+  if (!cur) return;
+  const list = allArt(), i = list.findIndex(a => a.id === cur.art.id);
+  start(list[(i + 1) % list.length].id);
+});
 
 let rt = 0;
 window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { if (!game.hidden) layout(); }, 150); });
@@ -845,6 +983,7 @@ game.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false }
 document.addEventListener("dblclick", (e) => e.preventDefault());
 
 renderSizes(); renderSound(); renderShelves();
+loadPhotos().then(() => { if (photoArt.length) renderShelves(); });
 })();
 </script>
 
