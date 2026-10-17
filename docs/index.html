@@ -552,34 +552,7 @@ const ptero = (c) =>
   `<ellipse cx="0" cy="8" rx="14" ry="22" fill="${c}"/><ellipse cx="6" cy="-20" rx="14" ry="12" fill="${c}"/>` +
   `<path d="M-4 -26 L-26 -40 L-2 -32Z" fill="${c}"/><path d="M16 -22 L44 -16 L16 -14Z" fill="#ffc93c"/>` + eye(8, -22, 4);
 const egg = (x, y, s, c) => at(x, y, s, `<ellipse cx="0" cy="0" rx="34" ry="44" fill="${c}"/><circle cx="-12" cy="-14" r="5" fill="#fff" opacity=".6"/><circle cx="10" cy="8" r="6" fill="#fff" opacity=".5"/><circle cx="-6" cy="22" r="4" fill="#fff" opacity=".5"/>`);
-const dinoBg = () => sky("#c9f0ff", "#fff7d6") + cloud(400, 54, .8) + volcano(390, 250, .9) +
-  `<path d="M0 230 Q120 204 240 222 T480 214 V360 H0Z" fill="#b9e47e"/><path d="M0 286 Q140 268 262 290 T480 282 V360 H0Z" fill="#9bd165"/>`;
 
-const longNeck = () => dinoBg() + palm(70, 290, 1.1) + palm(440, 300, .8) +
-  flower(130, 330, "#ff8fc8") + flower(400, 336, "#fff") + at(222, 212, 1, brachio("#7cc8ff", "#b6e1ff"));
-const triScene = () => dinoBg() + palm(450, 296, 1) + flower(70, 316, "#ffc93c") + flower(110, 340, "#ff8fc8") + flower(420, 336, "#b98cff") +
-  at(206, 232, 1.05, triceratops("#7fc8a9", "#f6a96b"));
-const trexScene = () => dinoBg() + palm(54, 300, 1) +
-  at(200, 196, 1, trex("#9ad06a", "#e7f6c2")) + at(372, 286, .45, triceratops("#ffb86b", "#ff8fc8")) + flower(450, 334, "#fff");
-const hatching = () => {
-  const r = rng(71); let leaves = "";
-  for (let i = 0; i < 9; i++) { const x = r() * 480, a = Math.round(r() * 360); leaves += `<ellipse cx="${f1(x)}" cy="${f1(40 + r() * 160)}" rx="40" ry="14" fill="${["#8fd16a", "#6cbf4f", "#a7e07a"][i % 3]}" transform="rotate(${a} ${f1(x)} 120)"/>`; }
-  return sky("#d7f5c8", "#fff6d9") + leaves + sun(410, 64, 26) +
-    `<path d="M0 270 Q240 250 480 270 V360 H0Z" fill="#a7e07a"/>` +
-    `<ellipse cx="240" cy="300" rx="170" ry="46" fill="#a9784f"/><g stroke="#8a5a3c" stroke-width="5" stroke-linecap="round"><path d="M90 296 L160 280 M120 314 L200 300 M280 300 L370 284 M300 316 L390 306 M200 322 L280 318"/></g>` +
-    `<ellipse cx="240" cy="290" rx="140" ry="30" fill="#7d5232"/>` +
-    egg(150, 262, 1, "#bfe7fb") + egg(334, 262, 1, "#ffd6e6") +
-    `<ellipse cx="240" cy="210" rx="44" ry="40" fill="#9ad06a"/><ellipse cx="240" cy="226" rx="26" ry="18" fill="#e7f6c2"/>` + eye(224, 204, 8) + eye(256, 204, 8) + cheek(214, 222) + cheek(266, 222) + smile(240, 226, 9) +
-    `<path d="M196 182 L210 168 L222 182 L236 166 L250 182 L264 166 L276 182 L286 170 Q296 140 240 132 Q186 140 196 182Z" fill="#fff6c9"/>` +
-    `<path d="M192 240 L206 226 L220 242 L234 226 L248 242 L262 226 L276 242 L290 228 Q300 300 240 304 Q180 300 192 240Z" fill="#fff6c9"/><circle cx="216" cy="270" r="6" fill="#fff" opacity=".7"/><circle cx="262" cy="282" r="5" fill="#fff" opacity=".7"/>`;
-};
-const dinoFriends = () => sky("#cdeeff", "#fff3e0") + cloud(90, 60, .9) + volcano(420, 236, .7) +
-  `<path d="M0 226 Q120 206 240 220 T480 212 V360 H0Z" fill="#b9e47e"/>` +
-  `<ellipse cx="380" cy="262" rx="110" ry="26" fill="#7cc8ff"/><ellipse cx="380" cy="262" rx="80" ry="15" fill="none" stroke="#a6dcff" stroke-width="4"/>` +
-  at(384, 224, .42, brachio("#ffb86b", "#ffd9a8")) +
-  `<path d="M0 290 Q140 272 262 294 T480 286 V360 H0Z" fill="#9bd165"/>` + palm(36, 300, .9) +
-  at(196, 248, .95, stego("#b39ddb", "#ff9f6b")) + at(310, 96, .8, ptero("#ff8fc8")) + at(140, 70, .45, ptero("#6fc2ff")) +
-  flower(320, 330, "#fff") + flower(440, 334, "#ffc93c");
 
 /* ---- Detailed animal scenes ---- */
 const bigLeaf = (x, y, rot, s, c, rib = "#3f8f3f") => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M0 0 Q34 -44 0 -118 Q-34 -44 0 0Z" fill="${c}"/><path d="M0 -4 Q2 -60 0 -110" stroke="${rib}" stroke-width="3" fill="none"/><path d="M0 -40 l14 -14 M0 -64 l12 -14 M0 -40 l-14 -14 M0 -64 l-12 -14" stroke="${rib}" stroke-width="2" opacity=".6"/></g>`;
@@ -748,6 +721,68 @@ const elephantScene = () =>
   bigLeaf(-8, 370, 40, 1.1, "#4cae52") + bigLeaf(30, 380, 15, .9, "#5fbf5a") + bigLeaf(490, 372, -40, 1.1, "#4cae52") + bigLeaf(452, 384, -15, .9, "#3f9b47") +
   turtle(110, 330, .55) + at(372, 336, .48, frog()) + butterfly(150, 270, .6, "#ffd84d", "#ff9f43") + butterfly(360, 230, .55, "#ff8fc8", "#b98cff") +
   flower(200, 346, "#fff", .8) + flower(240, 352, "#ffc93c", .7);
+
+const fern = (x, y, rot, s, c = "#4cae52") => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M0 0 Q6 -60 0 -120" stroke="#3f8f3f" stroke-width="4" fill="none"/>${Array.from({ length: 9 }, (_, i) => { const yy = -12 - i * 12, len = 30 - i * 2.6; return `<ellipse cx="${f1(len / 2 + 2)}" cy="${yy}" rx="${f1(len / 2)}" ry="5" fill="${c}" transform="rotate(-24 2 ${yy})"/><ellipse cx="${f1(-len / 2 - 2)}" cy="${yy}" rx="${f1(len / 2)}" ry="5" fill="${c}" transform="rotate(24 -2 ${yy})"/>`; }).join("")}</g>`;
+const mountains = (c1, c2) => `<path d="M0 200 L60 120 L110 170 L170 96 L240 180 L300 110 L360 170 L420 100 L480 160 V240 H0Z" fill="${c1}"/><path d="M150 120 L170 96 L190 120 L180 116 L170 124 L160 116Z M400 124 L420 100 L440 124 L430 120 L420 128 L410 120Z" fill="#fff"/><path d="M0 214 L80 160 L150 206 L230 150 L320 210 L400 160 L480 200 V250 H0Z" fill="${c2}"/>`;
+const eggNest = (x, y, s) => at(x, y, s, `<ellipse cx="0" cy="12" rx="50" ry="14" fill="#a9784f"/><path d="M-44 10 L-10 4 M-30 18 L14 12 M10 8 L44 4" stroke="#8a5a3c" stroke-width="4" stroke-linecap="round"/>` +
+  [[-22, -6, "#bfe7fb"], [0, -12, "#ffd6e6"], [22, -6, "#fff3b0"]].map(([ex, ey, c]) => `<ellipse cx="${ex}" cy="${ey}" rx="14" ry="19" fill="${c}"/><circle cx="${ex - 4}" cy="${ey - 6}" r="3" fill="#fff" opacity=".7"/><circle cx="${ex + 4}" cy="${ey + 4}" r="2.5" fill="#fff" opacity=".6"/>`).join(""));
+const dinoSky = (id) => `<defs><linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdcff"/><stop offset="1" stop-color="#fff2cf"/></linearGradient>` +
+  `<linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9dc72"/><stop offset="1" stop-color="#6fb84c"/></linearGradient></defs><rect width="480" height="360" fill="url(#${id}s)"/>`;
+const dinoGround = (id, seed) => `<path d="M0 232 Q120 208 240 224 T480 216 V360 H0Z" fill="#c4e88a"/>` +
+  `<path d="M0 270 Q140 252 262 272 T480 264 V360 H0Z" fill="url(#${id}g)"/>` + grassBlades(seed, 90, 0, 276, 480, 84);
+
+const longNeck = () => dinoSky("ln") + sun(64, 58, 24) + softCloud(200, 46, .7) + at(330, 60, .45, ptero("#ff8fc8")) + at(390, 36, .3, ptero("#6fc2ff")) +
+  mountains("#cdbdf0", "#b9a8e4") + volcano(420, 230, .8) + dinoGround("ln", 101) +
+  palm(64, 296, 1.15) + fern(20, 300, 30, .9) + fern(4, 340, 55, .8, "#5fbf5a") +
+  shadow(230, 312, 90, 12) + at(222, 212, 1, brachio("#7cc8ff", "#b6e1ff")) +
+  eggNest(420, 318, .9) + fern(470, 330, -40, .8) + rock(330, 336, 22) + rock(356, 346, 14) +
+  dragonfly(150, 130, .6, "#6f5bd6") + butterfly(300, 280, .55, "#ffd84d", "#ff9f43") +
+  flower(130, 340, "#ff8fc8", .9) + flower(270, 350, "#fff", .8) + flower(190, 352, "#ffc93c", .7);
+const triScene = () => dinoSky("tr") + softCloud(90, 50, .8) + softCloud(300, 36, .55) + sun(420, 56, 26) + at(220, 74, .4, ptero("#b98cff")) +
+  mountains("#d6c4ee", "#c0aee4") +
+  // far long-neck silhouette on the hills
+  `<g opacity=".55">${at(112, 212, .3, brachio("#7aa86a", "#7aa86a"))}</g>` + dinoGround("tr", 102) +
+  fern(16, 270, 20, 1.1) + fern(40, 300, 45, .9, "#5fbf5a") + fern(0, 230, 10, .8, "#3f9b47") +
+  palm(452, 300, 1.05) + fern(470, 330, -30, .8) +
+  shadow(210, 318, 96, 14) + at(206, 232, 1.05, triceratops("#7fc8a9", "#f6a96b")) +
+  rock(66, 338, 30) + rock(104, 348, 18) + mushroom(400, 340, .9) + mushroom(424, 350, .7) +
+  butterfly(110, 250, .6, "#ff8fc8", "#b98cff") + dragonfly(330, 140, .6, "#e63950") +
+  flower(160, 350, "#ffc93c", .8) + flower(300, 348, "#ff6b9a", .8) + flower(350, 354, "#fff", .7);
+const trexScene = () => dinoSky("tx") + sun(250, 44, 22) + softCloud(120, 56, .7) + at(330, 40, .35, ptero("#ff8fc8")) + at(370, 66, .25, ptero("#ffc93c")) +
+  mountains("#cdbdf0", "#b9a8e4") + volcano(416, 232, .85) + dinoGround("tx", 103) +
+  palm(52, 300, 1.1) + fern(10, 320, 35, .9) +
+  `<path d="M300 360 Q320 320 380 300 T480 290 V360Z" fill="#7cc8ff"/><path d="M330 340 Q360 318 410 308" stroke="#b5e3ff" stroke-width="3" fill="none"/>` +
+  shadow(200, 312, 70, 12) + at(200, 196, 1, trex("#9ad06a", "#e7f6c2")) + shadow(372, 324, 34, 6) + at(372, 286, .45, triceratops("#ffb86b", "#ff8fc8")) +
+  eggNest(108, 336, .75) + rock(468, 312, 20) + fern(478, 280, -30, .7) +
+  dragonfly(140, 150, .55, "#6f5bd6") + butterfly(300, 250, .5, "#6fc2ff", "#b98cff") + flower(260, 350, "#fff", .8) + flower(170, 352, "#ff8fc8", .7);
+const hatching = () => {
+  return dinoSky("ht") + sun(240, 40, 20) + softCloud(150, 50, .55) + softCloud(330, 46, .5) +
+    `<path d="M0 220 Q240 196 480 220 V360 H0Z" fill="#b9e47e"/>` +
+    bigLeaf(-8, 90, 120, 1.1, "#4cae52") + bigLeaf(6, 30, 150, 1, "#5fbf5a") + bigLeaf(488, 90, -120, 1.1, "#4cae52") + bigLeaf(470, 30, -150, 1, "#5fbf5a") +
+    // mama long-neck leaning in from the right to watch
+    `<g transform="translate(524 168) scale(-1 1)">${brachio("#ffb86b", "#ffd9a8")}</g>` +
+    `<path d="M0 266 Q240 248 480 266 V360 H0Z" fill="#a7e07a"/>` + grassBlades(104, 90, 0, 270, 480, 90) +
+    fern(10, 300, 30, 1) + fern(30, 340, 50, .8, "#5fbf5a") +
+    `<ellipse cx="220" cy="306" rx="160" ry="44" fill="#a9784f"/><g stroke="#8a5a3c" stroke-width="5" stroke-linecap="round"><path d="M80 300 L150 286 M110 318 L190 304 M260 304 L350 288 M280 320 L370 310 M180 326 L260 322"/></g>` +
+    `<ellipse cx="220" cy="296" rx="132" ry="28" fill="#7d5232"/>` +
+    egg(132, 270, 1, "#bfe7fb") + egg(312, 270, 1, "#ffd6e6") +
+    `<ellipse cx="220" cy="218" rx="44" ry="40" fill="#9ad06a"/><ellipse cx="220" cy="234" rx="26" ry="18" fill="#e7f6c2"/>` + eye(204, 212, 8) + eye(236, 212, 8) + cheek(194, 230) + cheek(246, 230) + smile(220, 234, 9) +
+    `<path d="M176 190 L190 176 L202 190 L216 174 L230 190 L244 174 L256 190 L266 178 Q276 148 220 140 Q166 148 176 190Z" fill="#fff6c9"/>` +
+    `<path d="M172 248 L186 234 L200 250 L214 234 L228 250 L242 234 L256 250 L270 236 Q280 308 220 312 Q160 308 172 248Z" fill="#fff6c9"/><circle cx="196" cy="278" r="6" fill="#fff" opacity=".7"/><circle cx="242" cy="290" r="5" fill="#fff" opacity=".7"/>` +
+    `<path d="M150 150 l-10 -8 M290 150 l10 -8 M160 130 l-6 -12 M280 130 l6 -12" stroke="#ffc93c" stroke-width="4" stroke-linecap="round"/>` +
+    rock(420, 330, 26) + flower(380, 350, "#ff8fc8", .9) + flower(460, 352, "#fff", .8) + mushroom(90, 346, .8) + butterfly(120, 200, .55, "#ff8fc8", "#ffd84d");
+};
+const dinoFriends = () => dinoSky("df") + sun(60, 54, 24) + softCloud(200, 40, .6) + at(310, 96, .8, ptero("#ff8fc8")) + at(150, 76, .45, ptero("#6fc2ff")) +
+  mountains("#d6c4ee", "#c0aee4") + volcano(430, 230, .7) +
+  `<path d="M0 226 Q120 206 240 220 T480 212 V360 H0Z" fill="#b9e47e"/>` +
+  `<ellipse cx="380" cy="262" rx="110" ry="26" fill="#7cc8ff"/><ellipse cx="380" cy="262" rx="80" ry="15" fill="none" stroke="#a6dcff" stroke-width="4"/>` +
+  at(384, 224, .42, brachio("#ffb86b", "#ffd9a8")) +
+  `<path d="M0 290 Q140 272 262 294 T480 286 V360 H0Z" fill="url(#dfg)"/>` + grassBlades(105, 80, 0, 294, 480, 66) +
+  palm(36, 300, .9) + fern(10, 330, 40, .8) +
+  shadow(196, 326, 90, 12) + at(196, 248, .95, stego("#b39ddb", "#ff9f6b")) +
+  eggNest(420, 330, .8) + fern(474, 338, -40, .7) + rock(320, 340, 20) + mushroom(108, 346, .8) +
+  butterfly(110, 270, .55, "#ffd84d", "#ff9f43") + dragonfly(260, 170, .55, "#e63950") +
+  flower(250, 350, "#fff", .8) + flower(360, 352, "#ffc93c", .8) + flower(150, 354, "#ff8fc8", .7);
 
 const THEMES = [
   { key: "photos", label: "My photos", tone: "#ff5d8f" },
