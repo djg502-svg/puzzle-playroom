@@ -181,13 +181,13 @@ h1 span:nth-child(2) { color: var(--ink); }
 .xylo::before, .xylo::after { content: ""; position: absolute; left: -1%; right: -1%; height: 22px; border-radius: 11px; background: #b9814f; box-shadow: 0 5px 0 #8a5a3c; z-index: 0; }
 .xylo::before { top: 22%; transform: rotate(-4deg); }
 .xylo::after { bottom: 22%; transform: rotate(4deg); }
-.bar {
+.xbar {
   position: relative; z-index: 1; flex: 1; border-radius: 22px; background: var(--c); box-shadow: 0 8px 0 rgba(59,42,74,.22), inset 0 -10px 0 rgba(0,0,0,.08), inset 0 10px 0 rgba(255,255,255,.25);
   transition: transform .08s, filter .08s;
 }
-.bar::before, .bar::after { content: ""; position: absolute; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,.15); }
-.bar::before { top: 14%; } .bar::after { bottom: 14%; }
-.bar.hit { transform: scale(.95); filter: brightness(1.18) saturate(1.1); }
+.xbar::before, .xbar::after { content: ""; position: absolute; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,.15); }
+.xbar::before { top: 14%; } .xbar::after { bottom: 14%; }
+.xbar.hit { transform: scale(.95); filter: brightness(1.18) saturate(1.1); }
 .note-fly { position: absolute; z-index: 30; width: 46px; height: 46px; pointer-events: none; animation: noteUp 1.3s ease-out forwards; }
 @keyframes noteUp { from { transform: translate(-50%, 0) scale(.6); opacity: 1; } to { transform: translate(-50%, -180px) scale(1.2) rotate(18deg); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .note-fly { animation-duration: .01s; } }
@@ -210,6 +210,22 @@ h1 span:nth-child(2) { color: var(--ink); }
   .col-items { flex: 1 1 auto; width: 100%; }
   .col-word { font-size: clamp(50px, 8vh, 110px); }
 }
+/* Shadow match */
+.shape-panel { position: absolute; background: rgba(255,255,255,.75); border-radius: 30px; box-shadow: 0 8px 0 var(--shadow); }
+.shape-sil, .shape-item { position: absolute; left: 0; top: 0; }
+.shape-sil svg, .shape-item svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.shape-sil svg { filter: brightness(0); opacity: .28; transition: opacity .35s; }
+.shape-sil.done svg { opacity: 0; }
+.shape-sil.pulse svg { animation: silPulse .8s ease-in-out 3; }
+@keyframes silPulse { 50% { opacity: .5; } }
+.shape-item { touch-action: none; will-change: transform; z-index: 5; }
+.shape-item svg { filter: drop-shadow(0 6px 4px rgba(70,35,80,.25)); transition: transform .15s; }
+.shape-item.lifted { z-index: 20; }
+.shape-item.lifted svg { transform: scale(1.1); filter: drop-shadow(0 16px 10px rgba(70,35,80,.3)); }
+.shape-item.placed svg { filter: none; }
+.shape-item.anim { transition: transform .32s cubic-bezier(.3,1.35,.5,1); }
+.shape-item.wiggle svg { animation: wiggle .5s ease-in-out 3; }
+@media (prefers-reduced-motion: reduce) { .shape-sil.pulse svg, .shape-item.wiggle svg { animation: none; } .shape-item.anim { transition-duration: .01s; } }
 /* ABC board */
 .abc-stage { position: absolute; left: 96px; right: 120px; top: calc(16px + env(safe-area-inset-top, 0px)); height: 40%; display: flex; align-items: center; justify-content: center; gap: 4%; }
 .abc-letter { font: 800 clamp(80px, 20vh, 200px)/1 var(--display); color: var(--c, var(--ink)); text-shadow: 0 7px 0 rgba(59,42,74,.15); white-space: nowrap; }
@@ -1793,12 +1809,12 @@ const xyloGame = {
   name: "Rainbow xylophone",
   start(el) {
     el.className = "xylophone"; this.timers = []; this.fingers = new Map();
-    el.innerHTML = `<div class="xylo-bg"></div><div class="xylo">${BAR_COLORS.map((c, i) => `<div class="bar" data-i="${i}" style="--c:${c};height:${92 - i * 6}%"></div>`).join("")}</div>
+    el.innerHTML = `<div class="xylo-bg"></div><div class="xylo">${BAR_COLORS.map((c, i) => `<div class="xbar" data-i="${i}" style="--c:${c};height:${92 - i * 6}%"></div>`).join("")}</div>
       <div class="corner-tools"><button class="tool-btn" id="songBtn" aria-label="Play a song">${NOTE_SVG("#3b2a4a")}</button></div>`;
     const xylo = el.querySelector(".xylo");
-    const barAt = (x, y) => { const t = document.elementFromPoint(x, y); return t && t.closest ? t.closest(".bar") : null; };
+    const barAt = (x, y) => { const t = document.elementFromPoint(x, y); return t && t.closest ? t.closest(".xbar") : null; };
     xylo.addEventListener("pointerdown", (e) => {
-      const bar = e.target.closest(".bar"); if (!bar) return;
+      const bar = e.target.closest(".xbar"); if (!bar) return;
       e.preventDefault(); audio(); try { xylo.setPointerCapture(e.pointerId); } catch (err) { }
       this.fingers.set(e.pointerId, bar); this.hit(+bar.dataset.i);
     });
@@ -1815,7 +1831,7 @@ const xyloGame = {
   hit(i) {
     const f = SCALE[i];
     tone(f, 0, 1.4, "sine", .32); tone(f * 2.01, 0, .5, "triangle", .05); tone(f * 4, 0, .1, "sine", .05);
-    const bar = playArea.querySelector(`.bar[data-i="${i}"]`); if (!bar) return;
+    const bar = playArea.querySelector(`.xbar[data-i="${i}"]`); if (!bar) return;
     bar.classList.remove("hit"); void bar.offsetWidth; bar.classList.add("hit");
     setTimeout(() => bar.classList.remove("hit"), 160);
     const r = bar.getBoundingClientRect(), n = document.createElement("div");
@@ -2003,7 +2019,131 @@ const colorsGame = {
   thumb: thumbURL(`<rect width="480" height="360" fill="#fff3e4"/>` + [[110, 130, "#ff3b4e", 1.3], [250, 110, "#ffd012", 1.1], [380, 150, "#2f8ff0", 1.2], [170, 260, "#3cc062", 1], [320, 270, "#8f5ae8", 1.05]].map(([x, y, c, s], i) => at(x, y, s, splatSVG(c, i).replace(/<svg[^>]*>|<\/svg>/g, ""))).join("") +
     `<g transform="rotate(35 420 60)"><rect x="412" y="20" width="16" height="90" rx="6" fill="#d9a46a"/><rect x="410" y="6" width="20" height="18" rx="3" fill="#c9ccd6"/><path d="M410 6 Q420 -26 430 6Z" fill="#ff6fbf"/></g>`),
 };
-const GAMES = { numbers: numbersGame, abc: abcGame, colors: colorsGame, balloons: balloonGame, xylophone: xyloGame };
+/* ---- Shadow match: drag four items onto their silhouettes; a new random set each round ---- */
+const numPic = (k) => [NUM_ITEMS[k][2], NUM_ITEMS[k][3]];
+const colPic = (k) => COLOR_ITEMS[k];
+// [spoken name, [viewBox, draw]]. Lookalike outlines (ball/orange, egg, cloud, blueberries) are left out.
+const SHAPE_POOL = [
+  ["sun", numPic(0)], ["duck", numPic(1)], ["apple", numPic(2)], ["fish", numPic(3)], ["star", numPic(4)], ["flower", numPic(5)],
+  ["heart", numPic(6)], ["butterfly", numPic(7)], ["balloon", numPic(8)], ["chick", numPic(9)],
+  ["cat", abcPic("cat")], ["dog", abcPic("dog")], ["grapes", abcPic("grapes")], ["hat", abcPic("hat")], ["ice cream", abcPic("ice cream")],
+  ["jellyfish", abcPic("jellyfish")], ["kite", abcPic("kite")], ["lion", abcPic("lion")], ["moon", abcPic("moon")], ["octopus", abcPic("octopus")],
+  ["pig", abcPic("pig")], ["crown", abcPic("queen")], ["rainbow", abcPic("rainbow")], ["turtle", abcPic("turtle")], ["umbrella", abcPic("umbrella")],
+  ["whale", abcPic("whale")], ["xylophone", abcPic("xylophone")], ["yo-yo", abcPic("yo-yo")], ["zebra", abcPic("zebra")], ["volcano", abcPic("volcano")],
+  ["strawberry", colPic("strawberry")], ["ladybug", colPic("ladybug")], ["carrot", colPic("carrot")], ["banana", colPic("banana")], ["leaf", colPic("leaf")],
+  ["teddy bear", colPic("bear")], ["acorn", colPic("acorn")], ["snowman", colPic("snowman")], ["pumpkin", colPic("pumpkin")], ["frog", colPic("frog")],
+];
+const shadowGame = {
+  name: "Shadow match",
+  start(el) {
+    el.className = "shadows"; this.recent = [];
+    el.innerHTML = `<div class="shape-panel" id="shapePanel"></div><div id="shapeLayer"></div>
+      <div class="done-bar" id="shapeDone" hidden><button class="round-btn" id="shapeAgain" aria-label="Play again"><svg viewBox="0 0 48 48"><path d="M37 26a13 13 0 1 1-4-11" fill="none" stroke="#3b2a4a" stroke-width="5.5" stroke-linecap="round"/><path d="M27 9h10v10z" fill="#3b2a4a" stroke="#3b2a4a" stroke-width="3" stroke-linejoin="round"/></svg></button></div>`;
+    this.layer = el.querySelector("#shapeLayer");
+    el.querySelector("#shapeAgain").addEventListener("click", () => { audio(); this.round(); });
+    this.drags = new Map();
+    this.onDown = (e) => {
+      const node = e.target.closest(".shape-item"); if (!node) return;
+      const it = node._it; if (!it || it.placed || it.dragging) return;
+      e.preventDefault(); audio(); this.lastTouch = Date.now();
+      try { el.setPointerCapture(e.pointerId); } catch (err) { }
+      it.dragging = true; node.classList.remove("anim", "wiggle"); node.classList.add("lifted");
+      this.drags.set(e.pointerId, { it, ox: e.clientX - it.x, oy: e.clientY - it.y });
+      sfx.pick();
+    };
+    this.onMove = (e) => {
+      const d = this.drags.get(e.pointerId); if (!d) return;
+      e.preventDefault(); d.it.x = e.clientX - d.ox; d.it.y = e.clientY - d.oy; this.place(d.it);
+    };
+    this.onUp = (e) => {
+      const d = this.drags.get(e.pointerId); if (!d) return;
+      this.drags.delete(e.pointerId);
+      const it = d.it; it.dragging = false; it.node.classList.remove("lifted");
+      // Forgiving: anywhere within about half an item of its own shadow counts.
+      if (Math.hypot(it.x - it.sx, it.y - it.sy) < this.size * .55) this.snap(it);
+      else this.moveTo(it, it.tx, it.ty);
+    };
+    el.addEventListener("pointerdown", this.onDown); el.addEventListener("pointermove", this.onMove);
+    el.addEventListener("pointerup", this.onUp); el.addEventListener("pointercancel", this.onUp);
+    this.onResize = () => this.layout();
+    window.addEventListener("resize", this.onResize);
+    this.hintTimer = setInterval(() => this.hint(), 1000);
+    this.round();
+  },
+  round() {
+    $("#shapeDone").hidden = true; this.done = false; this.lastTouch = Date.now();
+    // Pick 4 items, avoiding the ones from the last round when possible.
+    const fresh = SHAPE_POOL.filter(p => !this.recent.includes(p[0]));
+    const pool = (fresh.length >= 4 ? fresh : SHAPE_POOL).slice().sort(() => Math.random() - .5).slice(0, 4);
+    this.recent = pool.map(p => p[0]);
+    const slots = [0, 1, 2, 3].sort(() => Math.random() - .5);
+    if (slots.every((s, k) => s === k)) slots.reverse();
+    this.layer.innerHTML = "";
+    this.items = pool.map(([name, [vb, draw]], k) => {
+      const svg = svgWrap(vb, draw());
+      const sil = document.createElement("div"); sil.className = "shape-sil"; sil.innerHTML = svg;
+      const node = document.createElement("div"); node.className = "shape-item"; node.innerHTML = svg;
+      this.layer.append(sil, node);
+      const it = { name, sil, node, k, slot: slots[k], placed: false };
+      node._it = it; return it;
+    });
+    this.layout();
+  },
+  layout() {
+    if (!this.items) return;
+    const W = play.clientWidth, H = play.clientHeight, top = 100, m = 24, land = W >= H;
+    const sil = land ? { x: m, y: top, w: W * .58 - m * 1.5, h: H - top - m } : { x: m, y: top, w: W - m * 2, h: (H - top) * .55 - m };
+    const tray = land ? { x: W * .58 + m * .5, y: top, w: W * .42 - m * 1.5, h: H - top - m } : { x: m, y: sil.y + sil.h + m, w: W - m * 2, h: H - sil.y - sil.h - m * 2 };
+    const tc = tray.w / tray.h > 2.2 ? 4 : 2, tr = 4 / tc;
+    this.size = Math.floor(Math.min(sil.w / 2, sil.h / 2, tray.w / tc, tray.h / tr) * .8);
+    const panel = $("#shapePanel");
+    Object.assign(panel.style, { left: sil.x + "px", top: sil.y + "px", width: sil.w + "px", height: sil.h + "px" });
+    this.items.forEach(it => {
+      it.sx = sil.x + sil.w * (.25 + .5 * (it.k % 2)); it.sy = sil.y + sil.h * (.25 + .5 * Math.floor(it.k / 2));
+      it.tx = tray.x + tray.w * ((it.slot % tc) + .5) / tc; it.ty = tray.y + tray.h * (Math.floor(it.slot / tc) + .5) / tr;
+      [it.sil, it.node].forEach(n => { n.style.width = n.style.height = this.size + "px"; });
+      it.sil.style.transform = `translate(${it.sx - this.size / 2}px, ${it.sy - this.size / 2}px)`;
+      if (it.placed) { it.x = it.sx; it.y = it.sy; } else if (!it.dragging) { it.x = it.tx; it.y = it.ty; }
+      this.place(it);
+    });
+  },
+  place(it) { it.node.style.transform = `translate3d(${it.x - this.size / 2}px, ${it.y - this.size / 2}px, 0)`; },
+  moveTo(it, x, y, then) {
+    it.node.classList.add("anim"); it.x = x; it.y = y; this.place(it);
+    setTimeout(() => { it.node.classList.remove("anim"); then && then(); }, 340);
+  },
+  snap(it) {
+    it.placed = true; it.node.classList.add("placed"); it.sil.classList.add("done");
+    const n = this.items.filter(i => i.placed).length;
+    sfx.snap(n * 2); stopSpeech(); sayQueued(it.name + "!");
+    this.moveTo(it, it.sx, it.sy, () => burst(it.sx, it.sy, 16, 1.1));
+    if (n === this.items.length) {
+      this.done = true;
+      setTimeout(() => { sfx.win(); sayQueued("Yay! You did it!"); for (let k = 0; k < 3; k++) setTimeout(() => burst(play.clientWidth * (.25 + .25 * k), play.clientHeight * .35, 40, 2.2), k * 170); }, 500);
+      setTimeout(() => { if (this.done) $("#shapeDone").hidden = false; }, 1500);
+    }
+  },
+  hint() {
+    if (this.done || this.drags.size || !this.items || Date.now() - this.lastTouch < 12000) return;
+    this.lastTouch = Date.now();
+    const left = this.items.filter(i => !i.placed); if (!left.length) return;
+    const it = left[Math.floor(Math.random() * left.length)];
+    [it.node, it.sil].forEach(n => n.classList.remove("wiggle", "pulse")); void it.node.offsetWidth;
+    it.node.classList.add("wiggle"); it.sil.classList.add("pulse");
+    setTimeout(() => { it.node.classList.remove("wiggle"); it.sil.classList.remove("pulse"); }, 2500);
+  },
+  stop() {
+    clearInterval(this.hintTimer); window.removeEventListener("resize", this.onResize);
+    playArea.removeEventListener("pointerdown", this.onDown); playArea.removeEventListener("pointermove", this.onMove);
+    playArea.removeEventListener("pointerup", this.onUp); playArea.removeEventListener("pointercancel", this.onUp);
+    this.items = null; this.drags.clear();
+  },
+  thumb: thumbURL(`<rect width="480" height="360" fill="#e9f6ff"/><rect x="24" y="30" width="250" height="300" rx="26" fill="#fff"/>` +
+    [[90, 110, "grapes"], [210, 110, "ice cream"], [90, 250, "dog"], [210, 250, "star"]].map(([x, y, w]) => { const e = SHAPE_POOL.find(p => p[0] === w)[1]; const [vx, vy, vw, vh] = e[0].split(" ").map(Number), s = 90 / Math.max(vw, vh); return `<g transform="translate(${x} ${y}) scale(${f1(s)}) translate(${-(vx + vw / 2)} ${-(vy + vh / 2)})" ${w === "star" ? "" : 'opacity=".2" style="filter:brightness(0)"'}>${w === "star" ? "" : e[1]().replace(/fill="[^"]*"/g, 'fill="#3b2a4a"').replace(/stroke="(?!none)[^"]*"/g, 'stroke="#3b2a4a"')}</g>`; }).join("") +
+    [[370, 110, "grapes", -8], [380, 250, "ice cream", 6]].map(([x, y, w, r]) => { const e = SHAPE_POOL.find(p => p[0] === w)[1]; const [vx, vy, vw, vh] = e[0].split(" ").map(Number), s = 100 / Math.max(vw, vh); return `<g transform="translate(${x} ${y}) rotate(${r}) scale(${f1(s)}) translate(${-(vx + vw / 2)} ${-(vy + vh / 2)})">${e[1]()}</g>`; }).join("") +
+    `<g transform="translate(210 250) scale(${f1(90 / 56)})"><path d="${starD(0, 0, 25, 11.5)}" fill="#ffc93c" stroke="#f4a261" stroke-width="2" stroke-linejoin="round"/></g>`),
+};
+const GAMES = { numbers: numbersGame, abc: abcGame, colors: colorsGame, shadows: shadowGame, balloons: balloonGame, xylophone: xyloGame };
 
 // Automated tests open the page with #selftest to read piece targets.
 if (location.hash === "#selftest") window.__pp = { get cur() { return cur; }, get L() { return L; } };

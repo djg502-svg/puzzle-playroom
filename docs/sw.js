@@ -1,4 +1,4 @@
-const CACHE = "puzzles-c045fc0285";
+const CACHE = "puzzles-89d687ca80";
 const FILES = ["./", "index.html", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "fonts/baloo2-latin.woff2"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
