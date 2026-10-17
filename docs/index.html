@@ -138,7 +138,59 @@ h1 span:nth-child(2) { color: var(--ink); }
 }
 .round-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--shadow); }
 .round-btn svg { width: 40px; height: 40px; }
-#homeBtn { top: calc(14px + env(safe-area-inset-top, 0px)); left: calc(14px + env(safe-area-inset-left, 0px)); }
+#homeBtn, #playHome { top: calc(14px + env(safe-area-inset-top, 0px)); left: calc(14px + env(safe-area-inset-left, 0px)); }
+
+/* ---------- Mini games ---------- */
+#playArea { position: absolute; inset: 0; }
+#playFx { position: absolute; inset: 0; z-index: 35; pointer-events: none; }
+.corner-tools {
+  position: absolute; z-index: 40; top: calc(14px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px));
+  display: flex; gap: 8px; background: var(--card); padding: 8px; border-radius: 26px; box-shadow: 0 5px 0 var(--shadow);
+}
+.tool-btn { width: 60px; height: 56px; border: 0; border-radius: 18px; background: transparent; display: grid; place-items: center; font: 800 22px/1 var(--display); }
+.tool-btn[aria-pressed="true"] { background: var(--sun); }
+.tool-btn svg { width: 36px; height: 36px; }
+/* Numbers */
+.num-stage { position: absolute; left: 96px; right: 24px; top: calc(20px + env(safe-area-inset-top, 0px)); height: 48%; display: flex; align-items: center; justify-content: center; gap: 3%; }
+.num-big { font: 800 clamp(90px, 22vh, 210px)/1 var(--display); color: var(--c, var(--ink)); text-shadow: 0 7px 0 rgba(59,42,74,.15); min-width: 1.1em; text-align: center; }
+.num-big.bump { animation: cheer .6s cubic-bezier(.3,1.6,.5,1); }
+.num-items { display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 8px; flex: 0 1 68%; align-self: stretch; }
+.num-items svg { width: var(--s); height: var(--s); animation: popin .4s cubic-bezier(.3,1.6,.5,1) both; overflow: visible; }
+.num-pad {
+  position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px)); height: 40%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+}
+.num-btn {
+  border: 0; border-radius: 28px; background: var(--c); color: #fff; font: 800 clamp(44px, 10vh, 104px)/1 var(--display);
+  box-shadow: 0 8px 0 rgba(59,42,74,.22); text-shadow: 0 3px 0 rgba(0,0,0,.14); transition: transform .1s, box-shadow .1s;
+}
+@media (orientation: portrait) {
+  .num-stage { flex-direction: column; left: 24px; top: calc(92px + env(safe-area-inset-top, 0px)); gap: 6px; }
+  .num-big { font-size: clamp(70px, 11vh, 150px); }
+  .num-items { flex: 1 1 auto; width: 100%; }
+}
+.num-btn.hit { transform: translateY(6px) scale(.96); box-shadow: 0 2px 0 rgba(59,42,74,.22); }
+/* Balloons */
+.sky-bg { position: absolute; inset: 0; background: linear-gradient(#8fd3ff, #e9f8ff); }
+.sky-bg svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.balloon { position: absolute; left: 0; top: 0; will-change: transform; }
+.balloon svg { display: block; width: 100%; height: auto; overflow: visible; }
+/* Xylophone */
+.xylo-bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, #fff8ee, #ffe6cc); }
+.xylo { position: absolute; left: max(4%, 16px); right: max(4%, 16px); top: calc(96px + env(safe-area-inset-top, 0px)); bottom: calc(36px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: center; gap: 1.8%; }
+.xylo::before, .xylo::after { content: ""; position: absolute; left: -1%; right: -1%; height: 22px; border-radius: 11px; background: #b9814f; box-shadow: 0 5px 0 #8a5a3c; z-index: 0; }
+.xylo::before { top: 22%; transform: rotate(-4deg); }
+.xylo::after { bottom: 22%; transform: rotate(4deg); }
+.bar {
+  position: relative; z-index: 1; flex: 1; border-radius: 22px; background: var(--c); box-shadow: 0 8px 0 rgba(59,42,74,.22), inset 0 -10px 0 rgba(0,0,0,.08), inset 0 10px 0 rgba(255,255,255,.25);
+  transition: transform .08s, filter .08s;
+}
+.bar::before, .bar::after { content: ""; position: absolute; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,.15); }
+.bar::before { top: 14%; } .bar::after { bottom: 14%; }
+.bar.hit { transform: scale(.95); filter: brightness(1.18) saturate(1.1); }
+.note-fly { position: absolute; z-index: 30; width: 46px; height: 46px; pointer-events: none; animation: noteUp 1.3s ease-out forwards; }
+@keyframes noteUp { from { transform: translate(-50%, 0) scale(.6); opacity: 1; } to { transform: translate(-50%, -180px) scale(1.2) rotate(18deg); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .note-fly { animation-duration: .01s; } }
 .layer { position: absolute; left: 0; top: 0; }
 #ghost { z-index: 1; border-radius: 6px; box-shadow: 0 0 0 10px var(--card), 0 16px 26px 6px var(--shadow); }
 #full { z-index: 30; border-radius: 6px; opacity: 0; transition: opacity .7s ease; pointer-events: none; }
@@ -194,6 +246,14 @@ h1 span:nth-child(2) { color: var(--ink); }
     <input type="file" id="photoInput" class="visually-hidden" accept="image/*" multiple tabindex="-1">
   </div>
 </main>
+
+<section class="game" id="play" hidden>
+  <div id="playArea"></div>
+  <canvas id="playFx"></canvas>
+  <button class="round-btn" id="playHome" aria-label="Back to home">
+    <svg viewBox="0 0 48 48"><path d="M8 23 24 9l16 14" fill="none" stroke="#3b2a4a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 21v17a2 2 0 0 0 2 2h7V30h4v10h7a2 2 0 0 0 2-2V21" fill="#ff5d8f"/></svg>
+  </button>
+</section>
 
 <section class="game" id="game" hidden>
   <canvas class="layer" id="ghost"></canvas>
@@ -1105,6 +1165,8 @@ function renderShelves() {
       : `<button class="card" data-id="${a.id}" aria-label="${a.name} puzzle"><img src="${a.url}" alt="" draggable="false">${stars[a.id] ? STAR_SVG : ""}</button>`).join("");
     return `<section class="shelf" style="--tone:${t.tone}"><h2>${t.label}</h2><div class="cards">${t.key === "photos" ? ADD_CARD : ""}${cards}</div></section>`;
   }).join("");
+  $("#shelves").insertAdjacentHTML("afterbegin", `<section class="shelf" style="--tone:#6f5bd6"><h2>Games</h2><div class="cards">${Object.entries(GAMES).map(([k, g]) =>
+    `<button class="card" data-game="${k}" aria-label="${g.name}"><img src="${g.thumb}" alt="" draggable="false"></button>`).join("")}</div></section>`);
   // Hold the + card, then tap "Choose photo" (a plain tap on a file label is what iPadOS trusts to open Photos).
   holdable($("#addCard"), { onHold: () => { const w = $("#addWrap"); w.classList.add("open"); clearTimeout(pickTimer); pickTimer = setTimeout(() => w.classList.remove("open"), 8000); } });
   document.querySelectorAll(".card.photo").forEach(el => holdable(el, {
@@ -1116,6 +1178,7 @@ $("#shelves").addEventListener("click", (e) => {
   const del = e.target.closest(".del");
   if (del) { removePhoto(del.dataset.photo); return; }
   const b = e.target.closest(".card");
+  if (b && b.dataset.game) { audio(); openGame(b.dataset.game); return; }
   if (!b || b.classList.contains("photo") || b.classList.contains("add-card")) return;
   audio(); // unlock audio on iPad from this tap
   start(b.dataset.id);
@@ -1180,7 +1243,7 @@ async function start(id) {
   // aspect = piece width / height (1 for square cells; wide for slices).
   cur = { art, cols, rows, pieces, tabs: M.tabs, aspect: M.board ? M.board * rows / cols : 1, locked: 0, done: false, img: null };
 
-  home.hidden = true; game.hidden = false;
+  home.hidden = true; game.hidden = false; fxCanvas = fx;
   doneBar.hidden = true; full.classList.remove("show"); ghost.classList.remove("cheer");
   piecesEl.innerHTML = "";
   pieces.forEach(p => { p.el = document.createElement("div"); p.el.className = "piece"; p.cv = document.createElement("canvas"); p.el.appendChild(p.cv); piecesEl.appendChild(p.el); });
@@ -1356,6 +1419,7 @@ setInterval(() => {
 
 /* ---- Sparkles and confetti ---- */
 const parts = []; let fxRunning = false;
+let fxCanvas = fx; // the puzzle screen and the mini games each have their own effects canvas
 const FX_COLORS = ["#ff5d8f", "#ffc93c", "#6fc2ff", "#4cc79c", "#b98cff", "#ff9f43"];
 function burst(x, y, n, power) {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -1366,23 +1430,23 @@ function burst(x, y, n, power) {
   if (!fxRunning) { fxRunning = true; requestAnimationFrame(tick); }
 }
 function tick() {
-  const c = fx.getContext("2d"), dpr = L ? L.dpr : 1;
-  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, fx.width, fx.height);
+  const cv = fxCanvas, c = cv.getContext("2d"), dpr = cv.width / (cv.clientWidth || cv.width || 1), H = cv.clientHeight || 2000;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
   for (let i = parts.length - 1; i >= 0; i--) {
     const p = parts[i];
     p.x += p.vx; p.y += p.vy; p.vy += .22; p.vx *= .99; p.rot += p.vr; p.life -= .012;
-    if (p.life <= 0 || p.y > (L ? L.H : 2000) + 40) { parts.splice(i, 1); continue; }
+    if (p.life <= 0 || p.y > H + 40) { parts.splice(i, 1); continue; }
     c.save(); c.globalAlpha = Math.min(1, p.life * 2); c.translate(p.x, p.y); c.rotate(p.rot); c.fillStyle = p.c;
     if (p.star) c.fill(new Path2D(starD(0, 0, p.s, p.s * .45))); else c.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
     c.restore();
   }
-  if (parts.length) requestAnimationFrame(tick); else { fxRunning = false; c.clearRect(0, 0, fx.width, fx.height); }
+  if (parts.length) requestAnimationFrame(tick); else { fxRunning = false; c.clearRect(0, 0, cv.width, cv.height); }
 }
 
 /* ---- Navigation ---- */
 function goHome() {
   cur = null; drags.clear();
-  game.hidden = true; home.hidden = false;
+  game.hidden = true; home.hidden = false; fxCanvas = fx;
   try { wakeLock && wakeLock.release(); } catch (e) { }
   wakeLock = null;
   renderShelves();
@@ -1402,6 +1466,214 @@ window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() =
 document.addEventListener("gesturestart", (e) => e.preventDefault());
 game.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
 document.addEventListener("dblclick", (e) => e.preventDefault());
+
+/* ================= Mini games ================= */
+const play = $("#play"), playArea = $("#playArea"), playFx = $("#playFx");
+const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const sayQueued = (text) => {
+  if (!soundOn || !("speechSynthesis" in window)) return;
+  try { const u = new SpeechSynthesisUtterance(text); u.rate = .9; u.pitch = 1.25; speechSynthesis.speak(u); } catch (e) { }
+};
+const stopSpeech = () => { try { speechSynthesis.cancel(); } catch (e) { } };
+function popSound() {
+  const a = audio(); if (!a) return;
+  const len = Math.floor(a.sampleRate * .12), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+  const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  src.buffer = buf; f.type = "bandpass"; f.frequency.value = 1400; f.Q.value = .8; g.gain.value = .9;
+  src.connect(f); f.connect(g); g.connect(a.destination); src.start();
+  tone(880, 0, .12, "triangle", .12);
+}
+const svgWrap = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+const thumbURL = (inner) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="960" height="720">${inner}</svg>`);
+const balloonShape = (c, label = "") =>
+  `<path d="M0 46 Q8 80 -4 120" stroke="#8a7a96" stroke-width="2.5" fill="none"/><path d="M-7 44 L7 44 L0 34Z" fill="${c}"/>` +
+  `<ellipse cx="0" cy="0" rx="36" ry="44" fill="${c}"/><ellipse cx="-13" cy="-16" rx="8" ry="14" fill="#fff" opacity=".4"/>` +
+  (label ? `<text x="0" y="14" text-anchor="middle" font-family="Baloo 2, Arial Rounded MT Bold, Arial, sans-serif" font-weight="800" font-size="42" fill="#fff" stroke="rgba(0,0,0,.15)" stroke-width="2">${label}</text>` : "");
+const BALLOON_COLORS = [["red", "#ff4d5e"], ["orange", "#ff9f2e"], ["yellow", "#ffd23f"], ["green", "#44c76b"], ["blue", "#3fa2f7"], ["purple", "#9b6cf0"], ["pink", "#ff7ac2"]];
+const BAR_COLORS = ["#ff4d5e", "#ff9f2e", "#ffd23f", "#44c76b", "#2fc6c6", "#3fa2f7", "#6f6cf0", "#b46cf0"];
+const NOTE_SVG = (c) => svgWrap("0 0 48 48", `<path d="M18 36 V10 L38 6 V30" stroke="${c}" stroke-width="5" fill="none" stroke-linejoin="round"/><ellipse cx="13" cy="37" rx="7" ry="5.5" fill="${c}"/><ellipse cx="33" cy="31" rx="7" ry="5.5" fill="${c}"/>`);
+
+let activeGame = null;
+function openGame(key) {
+  closeGame();
+  home.hidden = true; play.hidden = false;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  playFx.width = play.clientWidth * dpr; playFx.height = play.clientHeight * dpr;
+  playFx.style.width = play.clientWidth + "px"; playFx.style.height = play.clientHeight + "px";
+  fxCanvas = playFx;
+  activeGame = GAMES[key]; activeGame.start(playArea);
+  try { navigator.wakeLock?.request("screen").then(w => wakeLock = w, () => { }); } catch (e) { }
+}
+function closeGame() {
+  if (activeGame) { activeGame.stop(); activeGame = null; }
+  stopSpeech(); playArea.innerHTML = ""; playArea.className = "";
+}
+$("#playHome").addEventListener("click", () => {
+  closeGame(); play.hidden = true; home.hidden = false; fxCanvas = fx;
+  try { wakeLock && wakeLock.release(); } catch (e) { } wakeLock = null;
+});
+
+/* ---- Numbers 1 to 10: tap a number, hear it, then count that many things ---- */
+const heartPath = "M0 -6 C0 -20 -22 -20 -22 -4 C-22 10 -4 18 0 24 C4 18 22 10 22 -4 C22 -20 0 -20 0 -6Z";
+const NUM_ITEMS = [
+  ["sun", "suns", "-58 -58 116 116", () => sun(0, 0, 28)],
+  ["duck", "ducks", "-90 -62 170 112", () => duck("#ffe066", "#f2c84b")],
+  ["apple", "apples", "-34 -40 68 72", () => `<path d="M0 -20 q2 -12 10 -14" stroke="#7d5232" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M2 -24 q14 -8 20 2 q-12 6 -20 -2" fill="#4cae52"/><path d="M0 -14 C-30 -30 -34 10 -16 24 C-8 30 -2 26 0 24 C2 26 8 30 16 24 C34 10 30 -30 0 -14Z" fill="#e63950"/><ellipse cx="-12" cy="-4" rx="5" ry="8" fill="#fff" opacity=".4"/>`],
+  ["fish", "fish", "-44 -30 104 60", () => fish("#3fa2f7", "#fff")],
+  ["star", "stars", "-28 -28 56 56", () => `<path d="${starD(0, 0, 25, 11.5)}" fill="#ffc93c" stroke="#f4a261" stroke-width="2" stroke-linejoin="round"/>` + eye(-7, -1, 2.8) + eye(7, -1, 2.8) + smile(0, 6, 4)],
+  ["flower", "flowers", "-27 -27 54 54", () => flower(0, 0, "#ff6b9a", 2.1)],
+  ["heart", "hearts", "-26 -24 52 52", () => `<path d="${heartPath}" fill="#ff5d8f"/><ellipse cx="-10" cy="-8" rx="4" ry="6" fill="#fff" opacity=".45"/>`],
+  ["butterfly", "butterflies", "-30 -26 60 52", () => butterfly(0, 0, 1.25, "#b98cff", "#ff8fc8")],
+  ["balloon", "balloons", "-40 -48 80 130", () => balloonShape("#44c76b")],
+  ["chick", "chicks", "-46 -54 92 108", () => chick()],
+];
+const NUM_COLORS = ["#ff4d5e", "#ff9f2e", "#f2b705", "#44c76b", "#2fc6c6", "#3fa2f7", "#6f6cf0", "#b46cf0", "#ff7ac2", "#8a5a3c"];
+const numbersGame = {
+  name: "Numbers",
+  timers: [],
+  start(el) {
+    el.className = "numbers";
+    el.innerHTML = `<div class="num-stage"><div class="num-big" id="numBig"></div><div class="num-items" id="numItems"></div></div>
+      <div class="num-pad">${NUM_COLORS.map((c, i) => `<button class="num-btn" data-n="${i + 1}" style="--c:${c}" aria-label="${WORDS[i + 1]}">${i + 1}</button>`).join("")}</div>`;
+    el.querySelector(".num-pad").addEventListener("pointerdown", (e) => {
+      const b = e.target.closest(".num-btn"); if (!b) return;
+      e.preventDefault(); audio();
+      b.classList.add("hit"); setTimeout(() => b.classList.remove("hit"), 140);
+      this.show(+b.dataset.n);
+    });
+  },
+  show(n) {
+    this.timers.forEach(clearTimeout); this.timers = []; stopSpeech();
+    const big = $("#numBig"), items = $("#numItems"), [one, many, vb, draw] = NUM_ITEMS[n - 1];
+    big.textContent = n; big.style.setProperty("--c", NUM_COLORS[n - 1]);
+    big.classList.remove("bump"); void big.offsetWidth; big.classList.add("bump");
+    items.innerHTML = "";
+    const r = items.getBoundingClientRect(), per = n > 5 ? Math.ceil(n / 2) : n, rows = n > 5 ? 2 : 1;
+    const s = Math.floor(Math.max(36, Math.min(r.width / per - 10, r.height / rows - 10, 150)));
+    items.style.setProperty("--s", s + "px");
+    tone(NOTES[n - 1], 0, .25, "triangle", .22);
+    sayQueued(WORDS[n] + "!");
+    // Count them in, one at a time, after the number has been said.
+    for (let k = 1; k <= n; k++) this.timers.push(setTimeout(() => {
+      items.insertAdjacentHTML("beforeend", svgWrap(vb, draw()));
+      tone(NOTES[k - 1], 0, .15, "sine", .14);
+      if (n > 1) sayQueued(WORDS[k]);
+    }, 900 + (k - 1) * 750));
+    this.timers.push(setTimeout(() => {
+      sayQueued(`${WORDS[n]} ${n === 1 ? one : many}!`);
+      const ir = items.getBoundingClientRect();
+      burst(ir.left + ir.width / 2, ir.top + ir.height / 2, 18 + n * 2, 1.4);
+    }, 900 + n * 750));
+  },
+  stop() { this.timers.forEach(clearTimeout); this.timers = []; },
+  thumb: thumbURL(`<defs><linearGradient id="nt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#ffd36b"/></linearGradient></defs><rect width="480" height="360" fill="url(#nt)"/>` +
+    [[40, "#ff4d5e", "1"], [180, "#44c76b", "2"], [320, "#3fa2f7", "3"]].map(([x, c, d], i) => `<rect x="${x}" y="${i % 2 ? 150 : 110}" width="120" height="130" rx="28" fill="${c}"/><rect x="${x}" y="${(i % 2 ? 150 : 110) + 112}" width="120" height="18" rx="9" fill="rgba(0,0,0,.15)"/><text x="${x + 60}" y="${(i % 2 ? 150 : 110) + 100}" text-anchor="middle" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-weight="900" font-size="100" fill="#fff">${d}</text>`).join("") +
+    `<path d="${starD(80, 60, 22, 10)}" fill="#ff9f2e"/><path d="${starD(420, 64, 18, 8)}" fill="#ff7ac2"/><path d="${starD(250, 330, 16, 7)}" fill="#9b6cf0"/>`),
+};
+
+/* ---- Balloon pop: balloons float up; popping one says its color or number ---- */
+const balloonGame = {
+  name: "Balloon pop",
+  start(el) {
+    el.className = "balloons";
+    this.mode = store.get("balloonMode", "colors"); this.list = []; this.pops = 0; this.last = 0; this.spawnAt = 0;
+    el.innerHTML = `<div class="sky-bg">${svgWrap("0 0 480 360", softCloud(80, 70, .9) + softCloud(390, 50, .8) + softCloud(250, 140, .6) + `<path d="M0 330 Q120 310 240 326 T480 320 V360 H0Z" fill="#a7e07a"/>`).replace("<svg", '<svg preserveAspectRatio="xMidYMid slice"')}</div>
+      <div id="balloonLayer"></div>
+      <div class="corner-tools"><button class="tool-btn" data-mode="colors" aria-label="Say colors">${svgWrap("0 0 48 48", '<circle cx="15" cy="17" r="9" fill="#ff4d5e"/><circle cx="33" cy="17" r="9" fill="#3fa2f7"/><circle cx="24" cy="33" r="9" fill="#ffd23f"/>')}</button><button class="tool-btn" data-mode="numbers" aria-label="Say numbers">123</button></div>`;
+    this.layer = el.querySelector("#balloonLayer");
+    const tools = el.querySelector(".corner-tools");
+    const mark = () => tools.querySelectorAll(".tool-btn").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === this.mode));
+    mark();
+    tools.addEventListener("click", (e) => { const b = e.target.closest(".tool-btn"); if (!b) return; this.mode = b.dataset.mode; store.set("balloonMode", this.mode); mark(); sfx.pick(); });
+    this.layer.addEventListener("pointerdown", (e) => { const b = e.target.closest(".balloon"); if (!b) return; e.preventDefault(); audio(); this.pop(b); });
+    this.frame = requestAnimationFrame((t) => this.tick(t));
+  },
+  spawn() {
+    const W = play.clientWidth, H = play.clientHeight, size = Math.round(Math.max(90, Math.min(W, H) * .17));
+    const [name, color] = BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)], n = 1 + Math.floor(Math.random() * 10);
+    const el = document.createElement("div");
+    el.className = "balloon"; el.style.width = size + "px";
+    el.innerHTML = svgWrap("-40 -48 80 170", balloonShape(color, this.mode === "numbers" ? String(n) : ""));
+    this.layer.appendChild(el);
+    const b = { el, name, color, n, size, x: size * .2 + Math.random() * (W - size * 1.4), y: H + 20, v: (H / 9) * (.75 + Math.random() * .5), phase: Math.random() * 6 };
+    el._b = b; this.list.push(b);
+  },
+  tick(t) {
+    const dt = Math.min(.05, (t - (this.last || t)) / 1000); this.last = t;
+    if (t > this.spawnAt && this.list.length < 7) { this.spawn(); this.spawnAt = t + 900 + Math.random() * 700; }
+    for (const b of [...this.list]) {
+      b.y -= b.v * dt; b.phase += dt * 1.6;
+      b.el.style.transform = `translate3d(${b.x + Math.sin(b.phase) * 14}px, ${b.y}px, 0)`;
+      if (b.y < -b.size * 2.4) { b.el.remove(); this.list.splice(this.list.indexOf(b), 1); }
+    }
+    this.frame = requestAnimationFrame((tt) => this.tick(tt));
+  },
+  pop(el) {
+    const b = el._b; if (!b || b.popped) return;
+    b.popped = true; this.list.splice(this.list.indexOf(b), 1);
+    const r = el.getBoundingClientRect(); el.remove();
+    popSound(); burst(r.left + r.width / 2, r.top + r.width * .55, 22, 1.3);
+    stopSpeech(); sayQueued(this.mode === "numbers" ? WORDS[b.n] + "!" : b.name + "!");
+    if (++this.pops % 10 === 0) setTimeout(() => { sfx.win(); for (let k = 0; k < 3; k++) setTimeout(() => burst(play.clientWidth * (.25 + .25 * k), play.clientHeight * .4, 40, 2.2), k * 160); }, 500);
+  },
+  stop() { cancelAnimationFrame(this.frame); this.list = []; },
+  thumb: thumbURL(`<defs><linearGradient id="bt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#e9f8ff"/></linearGradient></defs><rect width="480" height="360" fill="url(#bt)"/>` +
+    softCloud(90, 60, .8) + softCloud(400, 300, .9) + [[110, 190, "#ff4d5e", 1], [210, 130, "#ffd23f", 1.1], [320, 180, "#3fa2f7", 1], [400, 100, "#9b6cf0", .8], [60, 90, "#44c76b", .7]].map(([x, y, c, s]) => at(x, y, s * 1.3, balloonShape(c))).join("")),
+};
+
+/* ---- Rainbow xylophone: tap or swipe the bars; the note button plays a song ---- */
+const SCALE = [523.25, 587.33, 659.25, 698.46, 783.99, 880, 987.77, 1046.5];
+const TWINKLE = [[0, 1], [0, 1], [4, 1], [4, 1], [5, 1], [5, 1], [4, 2], [3, 1], [3, 1], [2, 1], [2, 1], [1, 1], [1, 1], [0, 2]];
+const xyloGame = {
+  name: "Rainbow xylophone",
+  start(el) {
+    el.className = "xylophone"; this.timers = []; this.fingers = new Map();
+    el.innerHTML = `<div class="xylo-bg"></div><div class="xylo">${BAR_COLORS.map((c, i) => `<div class="bar" data-i="${i}" style="--c:${c};height:${92 - i * 6}%"></div>`).join("")}</div>
+      <div class="corner-tools"><button class="tool-btn" id="songBtn" aria-label="Play a song">${NOTE_SVG("#3b2a4a")}</button></div>`;
+    const xylo = el.querySelector(".xylo");
+    const barAt = (x, y) => { const t = document.elementFromPoint(x, y); return t && t.closest ? t.closest(".bar") : null; };
+    xylo.addEventListener("pointerdown", (e) => {
+      const bar = e.target.closest(".bar"); if (!bar) return;
+      e.preventDefault(); audio(); try { xylo.setPointerCapture(e.pointerId); } catch (err) { }
+      this.fingers.set(e.pointerId, bar); this.hit(+bar.dataset.i);
+    });
+    // Sliding a finger across the bars plays each one, like a glissando.
+    xylo.addEventListener("pointermove", (e) => {
+      if (!this.fingers.has(e.pointerId)) return;
+      const bar = barAt(e.clientX, e.clientY);
+      if (bar && bar !== this.fingers.get(e.pointerId)) { this.fingers.set(e.pointerId, bar); this.hit(+bar.dataset.i); }
+    });
+    const up = (e) => this.fingers.delete(e.pointerId);
+    xylo.addEventListener("pointerup", up); xylo.addEventListener("pointercancel", up);
+    el.querySelector("#songBtn").addEventListener("click", () => { audio(); this.timers.length ? this.stopSong() : this.song(); });
+  },
+  hit(i) {
+    const f = SCALE[i];
+    tone(f, 0, 1.4, "sine", .32); tone(f * 2.01, 0, .5, "triangle", .05); tone(f * 4, 0, .1, "sine", .05);
+    const bar = playArea.querySelector(`.bar[data-i="${i}"]`); if (!bar) return;
+    bar.classList.remove("hit"); void bar.offsetWidth; bar.classList.add("hit");
+    setTimeout(() => bar.classList.remove("hit"), 160);
+    const r = bar.getBoundingClientRect(), n = document.createElement("div");
+    n.className = "note-fly"; n.innerHTML = NOTE_SVG(BAR_COLORS[i]);
+    n.style.left = (r.left + r.width / 2) + "px"; n.style.top = (r.top - 10) + "px";
+    playArea.appendChild(n); setTimeout(() => n.remove(), 1350);
+  },
+  song() {
+    $("#songBtn").setAttribute("aria-pressed", "true");
+    let t = 0;
+    TWINKLE.forEach(([i, beats]) => { this.timers.push(setTimeout(() => this.hit(i), t)); t += beats * 480; });
+    this.timers.push(setTimeout(() => this.stopSong(), t));
+  },
+  stopSong() { this.timers.forEach(clearTimeout); this.timers = []; const b = $("#songBtn"); if (b) b.setAttribute("aria-pressed", "false"); },
+  stop() { this.stopSong(); },
+  thumb: thumbURL(`<defs><radialGradient id="xt" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#fff8ee"/><stop offset="1" stop-color="#ffe0bd"/></radialGradient></defs><rect width="480" height="360" fill="url(#xt)"/>` +
+    `<rect x="30" y="112" width="420" height="16" rx="8" fill="#b9814f" transform="rotate(-4 240 120)"/><rect x="30" y="236" width="420" height="16" rx="8" fill="#b9814f" transform="rotate(4 240 244)"/>` +
+    BAR_COLORS.map((c, i) => { const h = 250 - i * 16, x = 48 + i * 50; return `<rect x="${x}" y="${180 - h / 2}" width="40" height="${h}" rx="14" fill="${c}"/><circle cx="${x + 20}" cy="${180 - h / 2 + 22}" r="5" fill="#fff"/><circle cx="${x + 20}" cy="${180 + h / 2 - 22}" r="5" fill="#fff"/>`; }).join("") +
+    `<g transform="rotate(-30 400 70)"><rect x="396" y="40" width="8" height="90" rx="4" fill="#d9a46a"/><circle cx="400" cy="38" r="16" fill="#ff5d8f"/></g>` +
+    [[90, 50, "#ff4d5e"], [250, 40, "#3fa2f7"]].map(([x, y, c]) => `<g transform="translate(${x} ${y}) scale(1.2)"><path d="M18 36 V10 L38 6 V30" stroke="${c}" stroke-width="5" fill="none"/><ellipse cx="13" cy="37" rx="7" ry="5.5" fill="${c}"/><ellipse cx="33" cy="31" rx="7" ry="5.5" fill="${c}"/></g>`).join("")),
+};
+const GAMES = { numbers: numbersGame, balloons: balloonGame, xylophone: xyloGame };
 
 // Automated tests open the page with #selftest to read piece targets.
 if (location.hash === "#selftest") window.__pp = { get cur() { return cur; }, get L() { return L; } };
