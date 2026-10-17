@@ -224,47 +224,6 @@ const scoopDrip = (cx, y, w, c) => { const n = 6, step = w / n; let d = `M${cx -
 const cone = (top, tipY) => `<defs><clipPath id="cn"><path d="M178 ${top} L302 ${top} L240 ${tipY} Z"/></clipPath></defs><path d="M178 ${top} L302 ${top} L240 ${tipY} Z" fill="#e9a95c"/><g clip-path="url(#cn)" stroke="#c9843a" stroke-width="4">${Array.from({ length: 9 }, (_, i) => `<line x1="${150 + i * 26}" y1="${top}" x2="${110 + i * 26}" y2="${tipY}"/><line x1="${150 + i * 26}" y1="${top}" x2="${190 + i * 26}" y2="${tipY}"/>`).join("")}</g>`;
 const cherry = (x, y) => `<path d="M${x} ${y - 13} Q${x + 6} ${y - 30} ${x + 20} ${y - 34}" stroke="#5d3b28" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="15" fill="#e63950"/><circle cx="${x - 5}" cy="${y - 5}" r="4" fill="#fff" opacity=".8"/>`;
 
-const lion = () => {
-  const mane = Array.from({ length: 16 }, (_, i) => { const a = i / 16 * Math.PI * 2; return `<circle cx="${f1(240 + 96 * Math.cos(a))}" cy="${f1(182 + 96 * Math.sin(a))}" r="32" fill="#e0662a"/>`; }).join("");
-  return sky("#bde8ff", "#fff3c4") + sun(78, 70, 30) + cloud(395, 62, 1) + cloud(325, 112, .65) +
-    hills("#8fd16a", "#6cbf4f") + flower(112, 322, "#ff6b9a") + flower(386, 330, "#fff") + flower(428, 296, "#ffb703", .9) + flower(64, 292, "#a06cd5", .9) +
-    mane + `<circle cx="240" cy="182" r="98" fill="#f28c28"/>` +
-    `<circle cx="180" cy="116" r="25" fill="#f7c45c"/><circle cx="180" cy="116" r="12" fill="#f39c6b"/><circle cx="300" cy="116" r="25" fill="#f7c45c"/><circle cx="300" cy="116" r="12" fill="#f39c6b"/>` +
-    `<ellipse cx="240" cy="192" rx="74" ry="68" fill="#f9cf62"/>` + eye(212, 176, 11) + eye(268, 176, 11) +
-    cheek(194, 212) + cheek(286, 212) +
-    `<ellipse cx="225" cy="220" rx="23" ry="18" fill="#fff1cc"/><ellipse cx="255" cy="220" rx="23" ry="18" fill="#fff1cc"/>` +
-    `<circle cx="218" cy="218" r="2.5" fill="#c98b4a"/><circle cx="228" cy="226" r="2.5" fill="#c98b4a"/><circle cx="262" cy="218" r="2.5" fill="#c98b4a"/><circle cx="252" cy="226" r="2.5" fill="#c98b4a"/>` +
-    `<path d="M225 200 Q240 191 255 200 Q249 215 240 217 Q231 215 225 200Z" fill="#8a4b2a"/>` +
-    `<path d="M240 216 V226 M228 232 Q240 242 252 232" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
-};
-
-const bunny = () => sky("#c6e6ff", "#eef8ff") + cloud(92, 70, 1) + cloud(388, 84, .9) + cloud(300, 46, .55) +
-  hills("#a7e07a", "#86cf5d") + flower(80, 320, "#ff8fc8") + flower(140, 296, "#fff") + flower(420, 318, "#b98cff") + flower(392, 288, "#ffc93c", .8) +
-  `<g transform="rotate(-22 352 282)"><path d="M338 262 L366 262 L352 336 Z" fill="#ff8a3d"/><path d="M342 280 h10 M346 298 h8" stroke="#e06a1f" stroke-width="3" stroke-linecap="round"/><path d="M352 264 q-14 -26 -4 -34 q4 16 4 34 q0 -20 12 -32 q4 14 -12 32" fill="#4cc79c"/></g>` +
-  `<ellipse cx="240" cy="270" rx="66" ry="58" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="240" cy="282" rx="38" ry="34" fill="#fff"/>` +
-  `<ellipse cx="204" cy="320" rx="28" ry="14" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="276" cy="320" rx="28" ry="14" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/>` +
-  `<g transform="rotate(-12 210 96)"><ellipse cx="210" cy="96" rx="19" ry="54" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="210" cy="100" rx="9" ry="38" fill="#ffb3c7"/></g>` +
-  `<g transform="rotate(12 270 96)"><ellipse cx="270" cy="96" rx="19" ry="54" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="270" cy="100" rx="9" ry="38" fill="#ffb3c7"/></g>` +
-  `<circle cx="240" cy="178" r="60" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/>` + eye(216, 172, 10) + eye(264, 172, 10) + cheek(202, 196) + cheek(278, 196) +
-  `<ellipse cx="240" cy="192" rx="9" ry="7" fill="#ff7aa2"/>` +
-  `<path d="M240 198 V205 M229 207 Q234 214 240 205 Q246 214 251 207" stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round"/>` +
-  `<path d="M196 190 L172 186 M196 198 L172 202 M284 190 L308 186 M284 198 L308 202" stroke="#b9aaa0" stroke-width="2.5" stroke-linecap="round"/>`;
-
-const puppy = () => sky("#ffe0ea", "#fff6e3") + cloud(84, 64, .9) + cloud(400, 70, 1) +
-  `<path d="M0 270 Q240 250 480 270 V360 H0Z" fill="#b5df79"/><path d="M0 312 Q240 296 480 312 V360 H0Z" fill="#9bd165"/>` +
-  `<g transform="rotate(-18 108 306)"><rect x="80" y="298" width="56" height="16" rx="8" fill="#fff"/><circle cx="80" cy="298" r="11" fill="#fff"/><circle cx="80" cy="314" r="11" fill="#fff"/><circle cx="136" cy="298" r="11" fill="#fff"/><circle cx="136" cy="314" r="11" fill="#fff"/></g>` +
-  `<circle cx="376" cy="298" r="32" fill="#6fc2ff"/><path d="M346 290 Q376 306 406 290" stroke="#fff" stroke-width="7" fill="none"/><circle cx="364" cy="282" r="5" fill="#fff" opacity=".7"/>` +
-  `<ellipse cx="240" cy="290" rx="72" ry="52" fill="#d9a066"/><ellipse cx="240" cy="300" rx="38" ry="30" fill="#f2d2a8"/>` +
-  `<circle cx="240" cy="180" r="72" fill="#e7b37b"/>` +
-  `<ellipse cx="268" cy="168" rx="24" ry="22" fill="#c98a52"/>` +
-  `<ellipse cx="170" cy="186" rx="26" ry="54" fill="#8a5a3c" transform="rotate(18 170 186)"/><ellipse cx="310" cy="186" rx="26" ry="54" fill="#8a5a3c" transform="rotate(-18 310 186)"/>` +
-  eye(214, 172, 11) + eye(266, 172, 11) + cheek(198, 206) + cheek(282, 206) +
-  `<ellipse cx="240" cy="214" rx="40" ry="30" fill="#f6dcb8"/>` +
-  `<ellipse cx="240" cy="236" rx="10" ry="13" fill="#ff7a93"/>` +
-  `<ellipse cx="240" cy="200" rx="15" ry="10" fill="${INK}"/><circle cx="235" cy="197" r="3" fill="#fff" opacity=".7"/>` +
-  `<path d="M240 209 V218 M226 222 Q233 230 240 218 Q247 230 254 222" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>` +
-  `<rect x="194" y="248" width="92" height="15" rx="7.5" fill="#e63950"/><circle cx="240" cy="268" r="10" fill="#ffc93c" stroke="#e5a91c" stroke-width="2"/>`;
-
 const iceCream = () => sky("#bff0e0", "#eafff7") + sprinkles(11, 70, 0, 0, 480, 360, ["#ff9ec4", "#ffc93c", "#6fc2ff", "#b98cff"]) +
   cone(206, 334) +
   `<circle cx="240" cy="184" r="64" fill="#9ee6c4"/>` + scoopDrip(240, 206, 132, "#9ee6c4") +
@@ -466,30 +425,6 @@ const farm = () =>
   pumpkin(422, 334, 22) + pumpkin(458, 346, 15) + `<path d="M400 350 q-10 -14 -2 -24 q8 6 2 24" fill="#5aa043"/>` + mushroom(374, 336, .9) + butterfly(440, 284, .6, "#ffd84d", "#ff9f43") +
   flower(132, 346, "#ff6b9a", .9) + flower(338, 352, "#b98cff", .8) + flower(196, 352, "#fff", .8) + flower(250, 356, "#ffc93c", .7);
 
-const pond = () => sky("#c6e6ff", "#effaff") + sun(410, 62, 26) + cloud(100, 64, .9) + cloud(250, 42, .6) +
-  `<path d="M0 196 Q240 170 480 196 V360 H0Z" fill="#a7e07a"/>` +
-  `<ellipse cx="240" cy="288" rx="236" ry="80" fill="#7cc8ff"/><ellipse cx="240" cy="292" rx="200" ry="58" fill="none" stroke="#a6dcff" stroke-width="4"/><ellipse cx="240" cy="296" rx="150" ry="36" fill="none" stroke="#a6dcff" stroke-width="4"/>` +
-  `<g stroke="#5aa043" stroke-width="5" stroke-linecap="round"><path d="M28 260 V178 M46 254 V160 M62 262 V188 M452 250 V170 M434 256 V186"/></g><g fill="#9b6a43"><rect x="21" y="176" width="14" height="34" rx="7"/><rect x="39" y="158" width="14" height="34" rx="7"/><rect x="445" y="168" width="14" height="34" rx="7"/></g>` +
-  `<path d="M60 304 a34 18 0 1 0 50 -8 L84 302Z" fill="#4cb85f"/><path d="M352 324 a30 15 0 1 0 44 -6 L372 322Z" fill="#4cb85f"/>` +
-  flower(380, 318, "#ff8fc8", .8) + at(86, 290, .62, frog()) +
-  at(206, 246, 1, duck("#ffffff", "#e3dbe6")) + at(302, 270, .5, duck("#ffe066", "#f2c84b")) + at(356, 282, .46, duck("#ffe066", "#f2c84b")) + at(408, 274, .42, duck("#ffe066", "#f2c84b"));
-
-const sea = () => {
-  let bubbles = ""; const r = rng(44);
-  for (let i = 0; i < 18; i++) bubbles += `<circle cx="${f1(r() * 480)}" cy="${f1(r() * 280)}" r="${f1(4 + r() * 9)}" fill="none" stroke="#e6f7ff" stroke-width="3" opacity=".8"/>`;
-  return sky("#86dbff", "#3b98de") + `<path d="M120 0 L170 0 L90 360 L40 360Z M300 0 L340 0 L300 360 L250 360Z" fill="#fff" opacity=".1"/>` + bubbles +
-    `<path d="M0 318 Q120 296 240 314 T480 306 V360 H0Z" fill="#f6d79b"/>` +
-    `<g fill="none" stroke-width="12" stroke-linecap="round"><path d="M34 330 q-18 -30 0 -60 q18 -30 0 -60" stroke="#3fbf7f"/><path d="M62 330 q16 -26 0 -52 q-16 -26 0 -52" stroke="#2fa36b"/><path d="M446 330 q-18 -30 0 -60 q18 -30 0 -60" stroke="#3fbf7f"/></g>` +
-    `<path d="${starD(424, 326, 20, 9)}" fill="#ff9f43" stroke="#ff9f43" stroke-width="5" stroke-linejoin="round"/>` +
-    at(196, 118, .88, whale()) + at(336, 236, .8, octopus()) + at(112, 222, .8, fish("#ffc93c", "#ff9f43")) + at(404, 140, .66, fish("#ff8fc8", "#fff")) + at(196, 300, .76, crab());
-};
-
-const elephantScene = () => sky("#ffe5c2", "#fff7e6") + `<circle cx="380" cy="150" r="70" fill="#ffd28a"/>` + cloud(110, 58, .8) +
-  `<path d="M0 252 Q240 228 480 252 V360 H0Z" fill="#d8e28a"/><path d="M0 300 Q240 284 480 300 V360 H0Z" fill="#c3d36b"/>` +
-  `<rect x="66" y="150" width="16" height="110" rx="6" fill="#9b6a43"/><path d="M74 170 L48 140 M74 180 L104 146" stroke="#9b6a43" stroke-width="9" stroke-linecap="round"/><ellipse cx="74" cy="130" rx="70" ry="24" fill="#7fb65a"/>` +
-  `<path d="M400 300 q4 -26 0 -40 M410 300 q0 -20 10 -34 M390 300 q-4 -18 -12 -28" stroke="#9fb34a" stroke-width="5" stroke-linecap="round" fill="none"/>` +
-  at(248, 190, 1.15, elephant());
-
 const coneFriends = () => sky("#ffe3ef", "#fff7fb") + sprinkles(17, 60, 0, 0, 480, 360, ["#ffb3d1", "#ffd36b", "#9fd5ff", "#b8e6c9"]) +
   `<rect y="318" width="480" height="42" fill="#ffd6a5"/>` +
   coneAt("a", 124, 226, 334, 46) + `<circle cx="124" cy="198" r="52" fill="#fff3d6"/>` + scoopDrip(124, 218, 98, "#fff3d6") + happyEye(106, 196) + happyEye(142, 196) + cheek(96, 212) + cheek(152, 212) + smile(124, 214, 8) +
@@ -628,6 +563,174 @@ const dinoFriends = () => sky("#cdeeff", "#fff3e0") + cloud(90, 60, .9) + volcan
   `<path d="M0 290 Q140 272 262 294 T480 286 V360 H0Z" fill="#9bd165"/>` + palm(36, 300, .9) +
   at(196, 248, .95, stego("#b39ddb", "#ff9f6b")) + at(310, 96, .8, ptero("#ff8fc8")) + at(140, 70, .45, ptero("#6fc2ff")) +
   flower(320, 330, "#fff") + flower(440, 334, "#ffc93c");
+
+/* ---- Detailed animal scenes ---- */
+const bigLeaf = (x, y, rot, s, c, rib = "#3f8f3f") => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M0 0 Q34 -44 0 -118 Q-34 -44 0 0Z" fill="${c}"/><path d="M0 -4 Q2 -60 0 -110" stroke="${rib}" stroke-width="3" fill="none"/><path d="M0 -40 l14 -14 M0 -64 l12 -14 M0 -40 l-14 -14 M0 -64 l-12 -14" stroke="${rib}" stroke-width="2" opacity=".6"/></g>`;
+const rock = (x, y, rx, ry = rx * .7) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${f1(ry)}" fill="#a9a4b8"/><ellipse cx="${f1(x - rx * .25)}" cy="${f1(y - ry * .35)}" rx="${f1(rx * .45)}" ry="${f1(ry * .3)}" fill="#c9c5d6"/>`;
+const acacia = (x, y, s) => at(x, y, s,
+  `<path d="M-6 0 L-4 -60 L-30 -96 M-4 -60 L22 -100 M-4 -40 L-2 -60" stroke="#8a5a3c" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M-10 0 L-4 -60 L4 -60 L6 0Z" fill="#8a5a3c"/>` +
+  `<ellipse cx="-4" cy="-104" rx="74" ry="18" fill="#5e9b3c"/><ellipse cx="-20" cy="-116" rx="50" ry="14" fill="#6fb04a"/><ellipse cx="18" cy="-112" rx="40" ry="12" fill="#6fb04a"/><ellipse cx="-30" cy="-120" rx="18" ry="5" fill="#8ccb5e"/>`);
+const giraffePeek = () =>
+  `<path d="M8 8 L38 8 L74 210 L30 210Z" fill="#f7c25c"/>` +
+  [[22, 40, 14, 10], [40, 80, 16, 12], [30, 120, 14, 12], [52, 150, 16, 12], [40, 186, 16, 12], [18, 70, 8, 8]].map(([x, y, w, h]) => `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="4" fill="#d48a3c"/>`).join("") +
+  `<path d="M38 8 q14 40 18 90" stroke="#e8a64a" stroke-width="6" fill="none" stroke-linecap="round"/>` +
+  `<path d="M2 -20 L-4 -42 M16 -18 L14 -40" stroke="#c9843a" stroke-width="6" stroke-linecap="round"/><circle cx="-4" cy="-44" r="6" fill="#8a5a3c"/><circle cx="14" cy="-42" r="6" fill="#8a5a3c"/>` +
+  `<ellipse cx="28" cy="-14" rx="13" ry="6" fill="#f7c25c" transform="rotate(-30 28 -14)"/>` +
+  `<ellipse cx="0" cy="0" rx="32" ry="23" fill="#f7c25c"/><ellipse cx="-24" cy="8" rx="17" ry="14" fill="#f2b04a"/><ellipse cx="-30" cy="4" rx="2.5" ry="3.5" fill="#8a5a3c"/>` +
+  eye(-4, -6, 6) + cheek(-6, 10) + `<path d="M-34 14 Q-28 19 -22 15" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+const lionHead = () => {
+  const mane = Array.from({ length: 16 }, (_, i) => { const a = i / 16 * Math.PI * 2; return `<circle cx="${f1(96 * Math.cos(a))}" cy="${f1(96 * Math.sin(a))}" r="32" fill="#d95c25"/>`; }).join("");
+  const mane2 = Array.from({ length: 16 }, (_, i) => { const a = (i + .5) / 16 * Math.PI * 2; return `<circle cx="${f1(82 * Math.cos(a))}" cy="${f1(82 * Math.sin(a))}" r="24" fill="#ef8228"/>`; }).join("");
+  return mane + mane2 + `<circle r="82" fill="#f39431"/>` +
+    `<circle cx="-60" cy="-66" r="25" fill="#f7c45c"/><circle cx="-60" cy="-66" r="12" fill="#f39c6b"/><circle cx="60" cy="-66" r="25" fill="#f7c45c"/><circle cx="60" cy="-66" r="12" fill="#f39c6b"/>` +
+    `<ellipse cx="0" cy="10" rx="74" ry="68" fill="#f9cf62"/><ellipse cx="-24" cy="-22" rx="30" ry="18" fill="#fbdc86" opacity=".7"/>` + eye(-28, -6, 11) + eye(28, -6, 11) +
+    cheek(-46, 30) + cheek(46, 30) +
+    `<ellipse cx="-15" cy="38" rx="23" ry="18" fill="#fff1cc"/><ellipse cx="15" cy="38" rx="23" ry="18" fill="#fff1cc"/>` +
+    `<circle cx="-22" cy="36" r="2.5" fill="#c98b4a"/><circle cx="-12" cy="44" r="2.5" fill="#c98b4a"/><circle cx="22" cy="36" r="2.5" fill="#c98b4a"/><circle cx="12" cy="44" r="2.5" fill="#c98b4a"/>` +
+    `<path d="M-15 18 Q0 9 15 18 Q9 33 0 35 Q-9 33 -15 18Z" fill="#8a4b2a"/>` +
+    `<path d="M0 34 V44 M-12 50 Q0 60 12 50" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
+};
+const lion = () =>
+  `<defs><linearGradient id="lsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset=".7" stop-color="#ffeec2"/><stop offset="1" stop-color="#ffd99a"/></linearGradient>` +
+  `<linearGradient id="lgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6cf6a"/><stop offset="1" stop-color="#c8ab45"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#lsky)"/><circle cx="80" cy="64" r="70" fill="#fff4c0" opacity=".6"/>` + sun(80, 64, 30) +
+  softCloud(236, 50, .7) + birds([[178, 36, 1], [200, 28, .8], [300, 30, .9]]) +
+  `<path d="M0 214 Q120 188 240 204 T480 196 V360 H0Z" fill="#efd98a"/>` +
+  acacia(150, 196, .32) + acacia(330, 192, .32) +
+  `<path d="M0 250 Q140 230 262 252 T480 244 V360 H0Z" fill="url(#lgr)"/>` + grassBlades(91, 110, 0, 254, 480, 106, ["#b8952f", "#d9bb52", "#a88a2a"]) +
+  acacia(56, 262, 1.05) + at(448, 144, 1, giraffePeek()) +
+  shadow(240, 318, 96, 16) + at(240, 196, 1, lionHead()) +
+  berryBush(24, 336, .8) + butterfly(86, 300, .8, "#ff8fc8", "#b98cff") +
+  rock(408, 332, 34) + rock(452, 344, 24) + flower(380, 350, "#fff", .8) + flower(134, 348, "#ff6b9a", .8) + flower(330, 340, "#ffc93c", .7) + butterfly(360, 290, .55, "#6fc2ff", "#b98cff");
+
+const bunnyChar = () =>
+  `<ellipse cx="0" cy="90" rx="66" ry="58" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="0" cy="102" rx="38" ry="34" fill="#fff"/>` +
+  `<ellipse cx="-36" cy="140" rx="28" ry="14" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="36" cy="140" rx="28" ry="14" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/>` +
+  `<g transform="rotate(-12 -30 -84)"><ellipse cx="-30" cy="-84" rx="19" ry="54" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="-30" cy="-80" rx="9" ry="38" fill="#ffb3c7"/></g>` +
+  `<g transform="rotate(12 30 -84)"><ellipse cx="30" cy="-84" rx="19" ry="54" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/><ellipse cx="30" cy="-80" rx="9" ry="38" fill="#ffb3c7"/></g>` +
+  `<circle cx="0" cy="-2" r="60" fill="#fbf7f2" stroke="#e5d9ce" stroke-width="3"/>` + eye(-24, -8, 10) + eye(24, -8, 10) + cheek(-38, 16) + cheek(38, 16) +
+  `<ellipse cx="0" cy="12" rx="9" ry="7" fill="#ff7aa2"/>` +
+  `<path d="M0 18 V25 M-11 27 Q-6 34 0 25 Q6 34 11 27" stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round"/>` +
+  `<path d="M-44 10 L-68 6 M-44 18 L-68 22 M44 10 L68 6 M44 18 L68 22" stroke="#b9aaa0" stroke-width="2.5" stroke-linecap="round"/>`;
+const tulip = (x, y, c, s = 1) => at(x, y, s, `<path d="M0 0 V-46" stroke="#4f9d38" stroke-width="4"/><path d="M0 -14 q-16 -6 -18 -22 q14 2 18 18" fill="#5fae43"/><path d="M-11 -58 L-11 -44 Q0 -34 11 -44 L11 -58 L5 -50 L0 -60 L-5 -50Z" fill="${c}"/>`);
+const carrotRow = (x, y, n) => Array.from({ length: n }, (_, i) => { const cx = x + i * 30; return `<ellipse cx="${cx}" cy="${y}" rx="14" ry="6" fill="#8a5a3c"/><path d="M${cx - 6} ${y - 2} L${cx} ${y + 10} L${cx + 6} ${y - 2}Z" fill="#ff8a3d"/><path d="M${cx} ${y - 3} q-10 -14 -4 -22 M${cx} ${y - 3} q2 -18 0 -24 M${cx} ${y - 3} q10 -14 6 -22" stroke="#4cae52" stroke-width="4" fill="none" stroke-linecap="round"/>`; }).join("");
+const wateringCan = (x, y, s) => at(x, y, s, `<path d="M18 -6 L52 -30 L56 -24 L26 6Z" fill="#4fb3c9"/><rect x="-30" y="-24" width="52" height="40" rx="8" fill="#5cc6dc"/><path d="M-24 -24 Q-4 -50 16 -24" stroke="#4fb3c9" stroke-width="7" fill="none"/><ellipse cx="54" cy="-28" rx="7" ry="4" fill="#4fb3c9" transform="rotate(-35 54 -28)"/><rect x="-22" y="-14" width="10" height="22" rx="4" fill="#fff" opacity=".35"/>`);
+const snail = (x, y, s) => at(x, y, s, `<path d="M-24 10 Q-30 10 -30 4 L28 4 Q36 4 34 10Z" fill="#c9e3a0"/><circle cx="0" cy="-10" r="18" fill="#e9a95c"/><path d="M0 -10 m-10 0 a10 10 0 1 1 10 10 a5 5 0 1 1 -5 -5" stroke="#b9772e" stroke-width="3" fill="none"/><path d="M26 2 V-14 M32 2 V-12" stroke="#c9e3a0" stroke-width="3"/><circle cx="26" cy="-15" r="3" fill="${INK}"/><circle cx="32" cy="-13" r="3" fill="${INK}"/>`);
+const bunny = () =>
+  `<defs><linearGradient id="bsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd6ff"/><stop offset="1" stop-color="#eef8ff"/></linearGradient>` +
+  `<linearGradient id="bgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a7e07a"/><stop offset="1" stop-color="#6fbf4f"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#bsky)"/>` +
+  ["#ff8fa3", "#ffb86b", "#ffe66d", "#8ee59b", "#7cc8ff", "#b79cff"].map((c, i) => { const r = 150 - i * 9; return `<path d="M${400 - r} 210 A${r} ${r} 0 0 1 ${400 + r} 210" stroke="${c}" stroke-width="9" fill="none" opacity=".8"/>`; }).join("") +
+  softCloud(80, 60, .9) + softCloud(250, 40, .6) + softCloud(470, 196, .9) + birds([[160, 30, .9], [184, 22, .7]]) + butterfly(330, 70, .7, "#ffd84d", "#ff9f43") +
+  `<path d="M0 206 Q120 180 240 198 T480 192 V360 H0Z" fill="#bfe890"/>` +
+  `<rect x="300" y="210" width="190" height="40" fill="#a9784f"/>` + carrotRow(312, 222, 6) + carrotRow(326, 242, 5) +
+  `<path d="M0 252 Q140 236 262 256 T480 250 V360 H0Z" fill="url(#bgr)"/>` + grassBlades(93, 100, 0, 258, 480, 102) +
+  tulip(24, 262, "#ff6b9a") + tulip(48, 256, "#ffd84d") + tulip(72, 266, "#b98cff") + tulip(36, 286, "#ff8a3d") + tulip(62, 292, "#ff6b9a", .9) +
+  shadow(240, 330, 76, 12) + at(240, 180, 1, bunnyChar()) +
+  shadow(338, 330, 34, 6) + at(338, 290, .4, bunnyChar()) +
+  `<g transform="rotate(-22 150 300)"><path d="M136 280 L164 280 L150 344 Z" fill="#ff8a3d"/><path d="M140 296 h10 M144 314 h8" stroke="#e06a1f" stroke-width="3" stroke-linecap="round"/><path d="M150 282 q-14 -26 -4 -34 q4 16 4 34 q0 -20 12 -32 q4 14 -12 32" fill="#4cc79c"/></g>` +
+  wateringCan(426, 322, .9) + snail(76, 336, .9) + mushroom(112, 344, .8) + flower(200, 350, "#fff", .8) + flower(290, 352, "#ff8fc8", .8) + flower(380, 352, "#ffc93c", .7);
+
+const doghouse = (x, y, s) => at(x, y, s,
+  `<rect x="-50" y="-40" width="100" height="80" fill="#6fc2ff"/><path d="M-50 -30 h100 M-50 -10 h100 M-50 10 h100" stroke="#5aaee8" stroke-width="3"/>` +
+  `<path d="M-62 -36 L0 -88 L62 -36Z" fill="#e63950"/><path d="M-62 -36 L0 -88 L62 -36" stroke="#fff" stroke-width="5" fill="none" stroke-linejoin="round"/>` +
+  `<path d="M-24 40 V4 a24 24 0 0 1 48 0 V40Z" fill="#3b2a4a"/>` +
+  `<rect x="-20" y="-32" width="40" height="18" rx="4" fill="#fff3b0"/><g transform="translate(0 -23) scale(.5)"><rect x="-16" y="-5" width="32" height="10" rx="5" fill="#d9a066"/><circle cx="-16" cy="-5" r="6" fill="#d9a066"/><circle cx="-16" cy="5" r="6" fill="#d9a066"/><circle cx="16" cy="-5" r="6" fill="#d9a066"/><circle cx="16" cy="5" r="6" fill="#d9a066"/></g>`);
+const kittyPeek = () =>
+  `<path d="M-24 -14 L-20 -44 L-4 -24Z M24 -14 L20 -44 L4 -24Z" fill="#ffb066"/><path d="M-20 -20 L-18 -36 L-10 -24Z M20 -20 L18 -36 L10 -24Z" fill="#ff9fb5"/>` +
+  `<circle r="28" fill="#ffb066"/><path d="M-8 -26 v8 M0 -28 v9 M8 -26 v8" stroke="#e8893a" stroke-width="3" stroke-linecap="round"/>` +
+  eye(-10, -2, 5.5) + eye(10, -2, 5.5) + `<path d="M-3 8 L3 8 L0 12Z" fill="#ff7aa2"/><path d="M0 12 q-5 5 -9 2 M0 12 q5 5 9 2" stroke="${INK}" stroke-width="2.5" fill="none" stroke-linecap="round"/>` +
+  `<path d="M-14 8 L-34 4 M-14 12 L-34 14 M14 8 L34 4 M14 12 L34 14" stroke="#c98b55" stroke-width="2" stroke-linecap="round"/>` + cheek(-16, 10) + cheek(16, 10);
+const puppy = () =>
+  `<defs><linearGradient id="psky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5dcff"/><stop offset="1" stop-color="#fff2e6"/></linearGradient>` +
+  `<linearGradient id="pgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9dc72"/><stop offset="1" stop-color="#78c254"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#psky)"/>` + sun(400, 56, 26) + softCloud(240, 50, .8) + softCloud(110, 40, .6) +
+  // kite on a string
+  `<g transform="translate(-186 -4)"><path d="M300 110 Q330 160 300 220" stroke="#8a7a96" stroke-width="2" fill="none"/><path d="M300 70 L322 100 L300 130 L278 100Z" fill="#ff5d8f"/><path d="M300 70 V130 M278 100 H322" stroke="#fff" stroke-width="3"/><path d="M300 130 q-8 10 0 18 q8 8 0 16" stroke="#ffc93c" stroke-width="3" fill="none"/></g>` +
+  // wooden fence across the yard
+  `<g>${Array.from({ length: 16 }, (_, i) => `<rect x="${i * 31}" y="176" width="28" height="80" rx="3" fill="${i % 2 ? "#e2b07a" : "#d9a46a"}"/>`).join("")}<rect y="190" width="480" height="8" fill="#c48d55"/><rect y="236" width="480" height="8" fill="#c48d55"/></g>` +
+  `<path d="M0 244 Q240 226 480 244 V360 H0Z" fill="url(#pgr)"/>` + grassBlades(95, 100, 0, 250, 480, 110) +
+  doghouse(66, 236, 1) + berryBush(452, 260, .95) + at(456, 226, .75, kittyPeek()) +
+  shadow(240, 336, 76, 12) + `<g transform="translate(0 -6)">` +
+  `<ellipse cx="240" cy="290" rx="72" ry="52" fill="#d9a066"/><ellipse cx="240" cy="300" rx="38" ry="30" fill="#f2d2a8"/>` +
+  `<circle cx="240" cy="180" r="72" fill="#e7b37b"/><ellipse cx="268" cy="168" rx="24" ry="22" fill="#c98a52"/>` +
+  `<ellipse cx="170" cy="186" rx="26" ry="54" fill="#8a5a3c" transform="rotate(18 170 186)"/><ellipse cx="310" cy="186" rx="26" ry="54" fill="#8a5a3c" transform="rotate(-18 310 186)"/>` +
+  eye(214, 172, 11) + eye(266, 172, 11) + cheek(198, 206) + cheek(282, 206) +
+  `<ellipse cx="240" cy="214" rx="40" ry="30" fill="#f6dcb8"/><ellipse cx="240" cy="236" rx="10" ry="13" fill="#ff7a93"/>` +
+  `<ellipse cx="240" cy="200" rx="15" ry="10" fill="${INK}"/><circle cx="235" cy="197" r="3" fill="#fff" opacity=".7"/>` +
+  `<path d="M240 209 V218 M226 222 Q233 230 240 218 Q247 230 254 222" stroke="${INK}" stroke-width="4" fill="none" stroke-linecap="round"/>` +
+  `<rect x="194" y="248" width="92" height="15" rx="7.5" fill="#e63950"/><circle cx="240" cy="268" r="10" fill="#ffc93c" stroke="#e5a91c" stroke-width="2"/></g>` +
+  `<ellipse cx="130" cy="330" rx="34" ry="12" fill="#5aaee8"/><ellipse cx="130" cy="324" rx="28" ry="7" fill="#9b6a43"/><circle cx="122" cy="322" r="3" fill="#c98a52"/><circle cx="134" cy="320" r="3" fill="#c98a52"/><circle cx="140" cy="325" r="3" fill="#c98a52"/>` +
+  `<g transform="rotate(-18 40 330)"><rect x="12" y="322" width="56" height="16" rx="8" fill="#fff"/><circle cx="12" cy="322" r="11" fill="#fff"/><circle cx="12" cy="338" r="11" fill="#fff"/><circle cx="68" cy="322" r="11" fill="#fff"/><circle cx="68" cy="338" r="11" fill="#fff"/></g>` +
+  `<circle cx="372" cy="318" r="30" fill="#6fc2ff"/><path d="M342 310 Q372 326 402 310" stroke="#fff" stroke-width="7" fill="none"/><circle cx="360" cy="302" r="5" fill="#fff" opacity=".7"/>` +
+  `<circle cx="440" cy="340" r="14" fill="#c8e64a"/><path d="M428 334 q12 8 24 0" stroke="#fff" stroke-width="2.5" fill="none"/>` +
+  butterfly(190, 326, .55, "#ff8fc8", "#ffd84d") + flower(300, 350, "#fff", .8) + flower(206, 354, "#ffc93c", .7);
+
+const willow = (x, y, s) => at(x, y, s,
+  `<path d="M-12 0 Q-8 -70 -20 -120 L4 -120 Q8 -70 12 0Z" fill="#8a5a3c"/>` +
+  `<ellipse cx="-10" cy="-130" rx="70" ry="44" fill="#6fb04a"/>` +
+  Array.from({ length: 14 }, (_, i) => { const sx = -74 + i * 11; return `<path d="M${sx} -120 q${i % 2 ? 6 : -6} 50 ${i % 2 ? -2 : 4} ${90 + (i % 3) * 14}" stroke="${i % 2 ? "#5e9b3c" : "#7fc055"}" stroke-width="7" fill="none" stroke-linecap="round"/>`; }).join(""));
+const dragonfly = (x, y, s, c) => at(x, y, s, `<ellipse cx="-14" cy="-8" rx="16" ry="6" fill="#d8f3ff" opacity=".85" transform="rotate(-15 -14 -8)"/><ellipse cx="14" cy="-8" rx="16" ry="6" fill="#d8f3ff" opacity=".85" transform="rotate(15 14 -8)"/><ellipse cx="-12" cy="2" rx="13" ry="5" fill="#d8f3ff" opacity=".85" transform="rotate(10 -12 2)"/><ellipse cx="12" cy="2" rx="13" ry="5" fill="#d8f3ff" opacity=".85" transform="rotate(-10 12 2)"/><rect x="-3" y="-14" width="6" height="40" rx="3" fill="${c}"/><circle cx="0" cy="-15" r="5" fill="${c}"/>`);
+const turtle = (x, y, s) => at(x, y, s, `<ellipse cx="-30" cy="8" rx="9" ry="7" fill="#7cc06a"/><ellipse cx="28" cy="8" rx="9" ry="7" fill="#7cc06a"/><ellipse cx="44" cy="-6" rx="14" ry="11" fill="#7cc06a"/>` + eye(48, -8, 3.5) + `<path d="M-40 4 Q-36 -34 0 -36 Q36 -34 40 4Z" fill="#4f9d38"/><path d="M-20 -4 L-10 -24 L10 -24 L20 -4Z" fill="#6cbf4f"/><path d="M-36 0 h72" stroke="#3f8030" stroke-width="3"/>`);
+const logPiece = (x, y, w) => `<rect x="${x}" y="${y - 14}" width="${w}" height="28" rx="14" fill="#9b6a43"/><ellipse cx="${x + w - 12}" cy="${y}" rx="11" ry="13" fill="#d9a066"/><ellipse cx="${x + w - 12}" cy="${y}" rx="6" ry="7" fill="none" stroke="#9b6a43" stroke-width="2"/><path d="M${x + 16} ${y - 6} h${w * .4}" stroke="#7d5232" stroke-width="2.5" stroke-linecap="round"/>`;
+const lilyPad = (x, y, s, flowerColor) => at(x, y, s, `<path d="M0 0 L34 -6 A36 18 0 1 1 30 8Z" fill="#4cb85f"/><path d="M0 0 L-24 -6 M0 0 L-16 10 M0 0 L10 12" stroke="#3f9b47" stroke-width="2"/>${flowerColor ? `<g transform="translate(-6 -8)"><path d="M0 0 L-10 -12 L-3 -4 L0 -16 L3 -4 L10 -12Z" fill="${flowerColor}"/><circle r="4" fill="#ffd84d"/></g>` : ""}`);
+const pond = () =>
+  `<defs><linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd6ff"/><stop offset="1" stop-color="#f2fbff"/></linearGradient>` +
+  `<linearGradient id="dwater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd2ff"/><stop offset="1" stop-color="#4fa8e8"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#dsky)"/>` + sun(70, 58, 26) + softCloud(200, 50, .8) + softCloud(330, 34, .55) + birds([[250, 74, .8], [272, 66, .7]]) +
+  `<path d="M0 190 Q120 166 240 182 T480 176 V360 H0Z" fill="#a7e07a"/>` +
+  [[120, 176], [150, 172], [180, 176], [290, 170], [320, 168]].map(([x, y]) => `<rect x="${x - 2}" y="${y - 4}" width="4" height="12" fill="#7d5232"/><circle cx="${x}" cy="${y - 10}" r="13" fill="#5aa84f"/>`).join("") +
+  willow(432, 218, 1) +
+  `<ellipse cx="236" cy="288" rx="240" ry="82" fill="url(#dwater)"/><ellipse cx="236" cy="292" rx="200" ry="58" fill="none" stroke="#b5e3ff" stroke-width="4"/><ellipse cx="236" cy="296" rx="150" ry="36" fill="none" stroke="#b5e3ff" stroke-width="3"/>` +
+  `<path d="M-10 226 Q60 214 120 222" stroke="#8fcc62" stroke-width="10" fill="none" stroke-linecap="round"/>` + grassBlades(97, 30, 0, 214, 160, 18) +
+  `<g stroke="#5aa043" stroke-width="5" stroke-linecap="round"><path d="M22 268 V176 M40 262 V160 M58 270 V190"/></g><g fill="#9b6a43"><rect x="15" y="172" width="14" height="34" rx="7"/><rect x="33" y="156" width="14" height="34" rx="7"/><rect x="51" y="188" width="14" height="30" rx="7"/></g>` +
+  `<path d="M14 230 q-12 -30 -2 -60 M64 236 q12 -24 6 -50" stroke="#6cbf4f" stroke-width="4" fill="none" stroke-linecap="round"/>` +
+  lilyPad(92, 300, 1.1) + lilyPad(380, 330, .9, "#ff8fc8") + lilyPad(170, 342, .7, "#fff") + lilyPad(300, 236, .6) +
+  at(86, 288, .62, frog()) +
+  shadow(212, 278, 56, 8) + at(206, 246, 1, duck("#ffffff", "#e3dbe6")) + at(302, 270, .5, duck("#ffe066", "#f2c84b")) + at(354, 282, .46, duck("#ffe066", "#f2c84b")) + at(404, 274, .42, duck("#ffe066", "#f2c84b")) +
+  logPiece(380, 350, 110) + turtle(430, 326, .6) +
+  dragonfly(300, 120, .8, "#6f5bd6") + dragonfly(110, 120, .6, "#e63950") + butterfly(470, 120, .6, "#ffd84d", "#ff9f43") +
+  `<path d="M0 360 V330 Q40 316 70 330 L60 360Z" fill="#8fcc62"/>` + grassBlades(98, 24, 0, 330, 70, 30) + flower(26, 346, "#ffc93c", .8);
+
+const coral = (x, y, s, c) => at(x, y, s, `<path d="M0 0 V-40 M0 -24 L-18 -46 M0 -30 L16 -56 M-18 -46 V-62 M16 -56 L26 -70 M0 -40 L-4 -64" stroke="${c}" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+const jelly = (x, y, s, c) => at(x, y, s, `${[-14, -5, 5, 14].map((t, i) => `<path d="M${t} 6 q${i % 2 ? 6 : -6} 14 0 26 q${i % 2 ? -6 : 6} 12 0 22" stroke="${c}" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"/>`).join("")}<path d="M-24 8 Q-24 -24 0 -24 Q24 -24 24 8 Q12 4 0 8 Q-12 4 -24 8Z" fill="${c}"/><ellipse cx="-8" cy="-12" rx="6" ry="4" fill="#fff" opacity=".5"/>` + eye(-7, -2, 3.5) + eye(7, -2, 3.5) + smile(0, 3, 4));
+const seaTurtle = (x, y, s) => at(x, y, s, `<ellipse cx="-30" cy="-20" rx="20" ry="8" fill="#7cc06a" transform="rotate(-30 -30 -20)"/><ellipse cx="-30" cy="20" rx="20" ry="8" fill="#7cc06a" transform="rotate(30 -30 20)"/><ellipse cx="22" cy="-22" rx="14" ry="6" fill="#7cc06a" transform="rotate(30 22 -22)"/><ellipse cx="22" cy="22" rx="14" ry="6" fill="#7cc06a" transform="rotate(-30 22 22)"/><ellipse cx="-48" cy="0" rx="14" ry="11" fill="#7cc06a"/>` + eye(-52, -3, 3.5) + `<ellipse rx="38" ry="28" fill="#4f9d38"/><path d="M-14 -14 L14 -14 L22 0 L14 14 L-14 14 L-22 0Z" fill="#6cbf4f"/><path d="M-14 -14 L-24 -22 M14 -14 L22 -24 M14 14 L22 24 M-14 14 L-24 22" stroke="#3f8030" stroke-width="3"/>`);
+const shell = (x, y, s, c) => at(x, y, s, `<path d="M0 10 L-16 -6 Q0 -22 16 -6Z" fill="${c}"/><path d="M0 10 L-8 -12 M0 10 L0 -15 M0 10 L8 -12" stroke="#fff" stroke-width="2" opacity=".7"/><rect x="-5" y="8" width="10" height="5" rx="2" fill="${c}"/>`);
+const chest = (x, y, s) => at(x, y, s, `<rect x="-30" y="-10" width="60" height="34" rx="4" fill="#a8693c"/><path d="M-30 -10 Q-30 -34 0 -34 Q30 -34 30 -10Z" fill="#c07a46"/><path d="M-30 -10 h60 M-20 -32 V24 M20 -32 V24" stroke="#ffc93c" stroke-width="5"/><rect x="-6" y="-14" width="12" height="12" rx="2" fill="#ffc93c"/><circle cx="-14" cy="-36" r="5" fill="#ffd84d"/><circle cx="0" cy="-38" r="5" fill="#ffd84d"/><circle cx="12" cy="-36" r="4" fill="#ffd84d"/>`);
+const fishSchool = (x, y, s, c) => at(x, y, s, [[0, 0], [24, -12], [24, 12], [48, 0], [48, -24], [48, 24]].map(([fx, fy]) => `<path d="M${fx} ${fy} q8 -7 16 0 q-8 7 -16 0Z M${fx + 15} ${fy} l6 -5 v10Z" fill="${c}"/><circle cx="${fx + 4}" cy="${fy - 1}" r="1.6" fill="${INK}"/>`).join(""));
+const sea = () => {
+  let bubbles = ""; const r = rng(44);
+  for (let i = 0; i < 22; i++) bubbles += `<circle cx="${f1(r() * 480)}" cy="${f1(r() * 290)}" r="${f1(3 + r() * 8)}" fill="none" stroke="#e6f7ff" stroke-width="2.5" opacity=".8"/>`;
+  return `<defs><linearGradient id="swater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fdcff"/><stop offset="1" stop-color="#2f84cc"/></linearGradient></defs>` +
+    `<rect width="480" height="360" fill="url(#swater)"/><path d="M0 14 Q40 4 80 14 T160 14 T240 14 T320 14 T400 14 T480 14 V0 H0Z" fill="#c8f2ff"/>` +
+    `<path d="M110 0 L160 0 L80 360 L30 360Z M290 0 L330 0 L290 360 L240 360Z M410 0 L440 0 L460 360 L420 360Z" fill="#fff" opacity=".09"/>` + bubbles +
+    seaTurtle(70, 64, .8) + jelly(430, 70, .9, "#ff9ec4") + jelly(392, 40, .55, "#b98cff") + fishSchool(10, 160, .9, "#ffd84d") +
+    `<path d="M0 314 Q120 292 240 310 T480 302 V360 H0Z" fill="#f6d79b"/><path d="M0 334 Q120 320 240 332 T480 326" stroke="#e8c27e" stroke-width="3" fill="none"/>` +
+    `<g fill="none" stroke-width="12" stroke-linecap="round"><path d="M30 330 q-18 -30 0 -60 q18 -30 0 -60" stroke="#3fbf7f"/><path d="M58 330 q16 -26 0 -52 q-16 -26 0 -52" stroke="#2fa36b"/><path d="M462 320 q-16 -30 0 -60 q16 -30 0 -60" stroke="#3fbf7f"/></g>` +
+    coral(110, 318, 1, "#ff7f9e") + coral(300, 316, .8, "#ff9f43") + coral(440, 330, .9, "#c58cff") +
+    at(196, 118, .88, whale()) + at(336, 236, .8, octopus()) + at(112, 230, .8, fish("#ffc93c", "#ff9f43")) + at(404, 150, .66, fish("#ff8fc8", "#fff")) + at(230, 300, .74, crab()) +
+    `<path d="${starD(150, 340, 16, 7)}" fill="#ff9f43" stroke="#ff9f43" stroke-width="4" stroke-linejoin="round"/>` + shell(360, 344, 1, "#ffb3d1") + shell(84, 346, .8, "#fff3c4") + chest(400, 318, .8) + rock(268, 344, 18);
+};
+
+const hibiscus = (x, y, s, c) => at(x, y, s, [0, 1, 2, 3, 4].map(i => { const a = i / 5 * 360; return `<ellipse cx="0" cy="-13" rx="10" ry="14" fill="${c}" transform="rotate(${a})"/>`; }).join("") + `<circle r="6" fill="#ffd84d"/><path d="M0 0 L10 -14" stroke="#ffd84d" stroke-width="2.5"/><circle cx="10" cy="-15" r="2.5" fill="#ff9f1c"/>`);
+const parrot = (x, y, s) => at(x, y, s, `<path d="M4 28 L0 64 L12 30Z" fill="#6fc2ff"/><path d="M10 28 L14 62 L20 26Z" fill="#ffd84d"/><ellipse cx="6" cy="8" rx="18" ry="26" fill="#e63950"/><ellipse cx="12" cy="12" rx="10" ry="18" fill="#6fc2ff"/><circle cx="0" cy="-18" r="15" fill="#e63950"/><circle cx="-4" cy="-20" r="6" fill="#fff"/>` + eye(-4, -20, 3.5) + `<path d="M-14 -16 Q-24 -12 -16 -4 Q-12 -10 -10 -14Z" fill="#ffd84d"/><path d="M-8 30 h24" stroke="#ff9f1c" stroke-width="3" stroke-linecap="round"/>`);
+const elephantScene = () =>
+  `<defs><linearGradient id="esky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fe0ff"/><stop offset="1" stop-color="#fff6dc"/></linearGradient>` +
+  `<linearGradient id="egr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9e07a"/><stop offset="1" stop-color="#8fc75a"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#esky)"/>` + sun(240, 44, 22) + softCloud(160, 50, .6) + softCloud(330, 64, .55) +
+  `<path d="M0 220 Q120 196 240 212 T480 206 V360 H0Z" fill="#cfe89a"/>` + [[150, 206], [330, 200]].map(([x, y]) => `<rect x="${x - 2}" y="${y - 6}" width="4" height="14" fill="#7d5232"/><ellipse cx="${x}" cy="${y - 12}" rx="22" ry="8" fill="#6fa84a"/>`).join("") +
+  `<path d="M0 258 Q140 240 262 260 T480 252 V360 H0Z" fill="url(#egr)"/>` + grassBlades(99, 90, 0, 262, 480, 98) +
+  `<ellipse cx="300" cy="320" rx="120" ry="24" fill="#7cc8ff"/><ellipse cx="300" cy="318" rx="90" ry="14" fill="none" stroke="#b5e3ff" stroke-width="3"/>` +
+  // jungle leaves framing the corners
+  bigLeaf(-6, 70, 120, 1.1, "#4cae52") + bigLeaf(10, 20, 150, 1, "#5fbf5a") + bigLeaf(-10, 130, 95, .9, "#3f9b47") +
+  bigLeaf(486, 60, -120, 1.1, "#4cae52") + bigLeaf(470, 10, -150, 1, "#5fbf5a") +
+  `<path d="M380 96 Q430 90 486 100" stroke="#8a5a3c" stroke-width="7" fill="none" stroke-linecap="round"/>` + parrot(418, 62, .9) +
+  hibiscus(40, 170, 1.1, "#ff6b9a") + hibiscus(62, 200, .8, "#ff8a3d") + hibiscus(450, 160, 1, "#ff6b9a") +
+  shadow(244, 306, 80, 12) + at(244, 186, 1.12, elephant()) +
+  `<path d="M300 300 q10 -20 4 -36 M310 302 q16 -14 20 -30 M290 302 q-8 -14 -4 -26" stroke="#9fd8ff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"/>` +
+  bigLeaf(-8, 370, 40, 1.1, "#4cae52") + bigLeaf(30, 380, 15, .9, "#5fbf5a") + bigLeaf(490, 372, -40, 1.1, "#4cae52") + bigLeaf(452, 384, -15, .9, "#3f9b47") +
+  turtle(110, 330, .55) + at(372, 336, .48, frog()) + butterfly(150, 270, .6, "#ffd84d", "#ff9f43") + butterfly(360, 230, .55, "#ff8fc8", "#b98cff") +
+  flower(200, 346, "#fff", .8) + flower(240, 352, "#ffc93c", .7);
 
 const THEMES = [
   { key: "photos", label: "My photos", tone: "#ff5d8f" },
