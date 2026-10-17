@@ -241,40 +241,8 @@ const scoopDrip = (cx, y, w, c) => { const n = 6, step = w / n; let d = `M${cx -
 const cone = (top, tipY) => `<defs><clipPath id="cn"><path d="M178 ${top} L302 ${top} L240 ${tipY} Z"/></clipPath></defs><path d="M178 ${top} L302 ${top} L240 ${tipY} Z" fill="#e9a95c"/><g clip-path="url(#cn)" stroke="#c9843a" stroke-width="4">${Array.from({ length: 9 }, (_, i) => `<line x1="${150 + i * 26}" y1="${top}" x2="${110 + i * 26}" y2="${tipY}"/><line x1="${150 + i * 26}" y1="${top}" x2="${190 + i * 26}" y2="${tipY}"/>`).join("")}</g>`;
 const cherry = (x, y) => `<path d="M${x} ${y - 13} Q${x + 6} ${y - 30} ${x + 20} ${y - 34}" stroke="#5d3b28" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="15" fill="#e63950"/><circle cx="${x - 5}" cy="${y - 5}" r="4" fill="#fff" opacity=".8"/>`;
 
-const iceCream = () => sky("#bff0e0", "#eafff7") + sprinkles(11, 70, 0, 0, 480, 360, ["#ff9ec4", "#ffc93c", "#6fc2ff", "#b98cff"]) +
-  cone(206, 334) +
-  `<circle cx="240" cy="184" r="64" fill="#9ee6c4"/>` + scoopDrip(240, 206, 132, "#9ee6c4") +
-  eye(220, 188, 8) + eye(260, 188, 8) + cheek(206, 204) + cheek(274, 204) + smile(240, 202, 10) +
-  `<circle cx="240" cy="122" r="54" fill="#ff9ec4"/>` + scoopDrip(240, 150, 104, "#ff9ec4") +
-  sprinkles(5, 16, 200, 88, 80, 50) + cherry(240, 66);
 
-const popsicle = () => {
-  let rays = "";
-  for (let i = 0; i < 12; i++) { const a0 = i / 12 * Math.PI * 2, a1 = a0 + Math.PI / 12; rays += `<path d="M240 170 L${f1(240 + Math.cos(a0) * 420)} ${f1(170 + Math.sin(a0) * 420)} L${f1(240 + Math.cos(a1) * 420)} ${f1(170 + Math.sin(a1) * 420)}Z" fill="#fff3b0"/>`; }
-  return `<rect width="480" height="360" fill="#ffe27a"/>` + rays + cloud(80, 300, 1.2) + cloud(410, 310, 1.1) + cloud(70, 70, .8) + cloud(410, 60, .8) +
-    `<rect x="223" y="244" width="34" height="92" rx="17" fill="#e3b77a"/><path d="M236 300 h8" stroke="#c99a58" stroke-width="3" stroke-linecap="round"/>` +
-    `<defs><clipPath id="pp"><rect x="172" y="54" width="136" height="204" rx="64"/></clipPath></defs>` +
-    `<g clip-path="url(#pp)"><rect x="160" y="40" width="160" height="80" fill="#ff5d73"/><rect x="160" y="120" width="160" height="70" fill="#ffa94d"/><rect x="160" y="190" width="160" height="80" fill="#b388eb"/></g>` +
-    `<ellipse cx="206" cy="266" rx="9" ry="12" fill="#b388eb"/><ellipse cx="274" cy="262" rx="7" ry="9" fill="#b388eb"/>` +
-    `<rect x="190" y="78" width="16" height="92" rx="8" fill="#fff" opacity=".35"/>` +
-    eye(218, 158, 9) + eye(262, 158, 9) + cheek(204, 176) + cheek(276, 176) + smile(240, 174, 12);
-};
 
-const sundae = () => {
-  const r = rng(7); let hearts = "";
-  for (let i = 0; i < 26; i++) { const x = r() * 480, y = r() * 300, s = .7 + r() * .7; hearts += `<path transform="translate(${f1(x)} ${f1(y)}) scale(${f1(s)})" d="M0 4 C0 -2 -9 -2 -9 4 C-9 10 0 14 0 18 C0 14 9 10 9 4 C9 -2 0 -2 0 4Z" fill="${["#ffb3d9", "#c9b6ff", "#fff"][i % 3]}"/>`; }
-  return sky("#e3d8ff", "#fff0fa") + hearts +
-    `<rect y="300" width="480" height="60" fill="#ffcf99"/><rect y="300" width="480" height="10" fill="#ffb877"/>` +
-    `<circle cx="196" cy="192" r="42" fill="#fff3d6"/><circle cx="284" cy="192" r="42" fill="#8b5a3c"/><circle cx="240" cy="160" r="48" fill="#ff9ec4"/>` +
-    `<circle cx="240" cy="112" r="28" fill="#fff"/><circle cx="240" cy="90" r="20" fill="#fff"/><circle cx="240" cy="74" r="12" fill="#fff"/>` +
-    cherry(240, 58) +
-    `<rect x="290" y="96" width="16" height="86" rx="4" fill="#e9a95c" transform="rotate(24 298 140)"/>` +
-    sprinkles(3, 14, 200, 130, 80, 50) + eye(222, 160, 8) + eye(258, 160, 8) + smile(240, 174, 9) +
-    `<path d="M146 198 Q150 284 240 284 Q330 284 334 198 Z" fill="#bfe7fb" opacity=".95"/>` +
-    `<ellipse cx="240" cy="198" rx="94" ry="11" fill="#e4f6ff"/>` +
-    `<path d="M168 214 Q174 260 214 270" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" opacity=".7"/>` +
-    `<rect x="229" y="282" width="22" height="22" fill="#bfe7fb"/><ellipse cx="240" cy="306" rx="54" ry="10" fill="#a6dcf5"/>`;
-};
 
 const unicornHead = () => {
   const mane = [["#ff8fc8", 176, 140, 26], ["#b98cff", 162, 178, 24], ["#7fd1ff", 160, 216, 22], ["#ffd166", 172, 250, 20], ["#ff8fc8", 302, 142, 20], ["#b98cff", 310, 174, 16]]
@@ -442,36 +410,8 @@ const farm = () =>
   pumpkin(422, 334, 22) + pumpkin(458, 346, 15) + `<path d="M400 350 q-10 -14 -2 -24 q8 6 2 24" fill="#5aa043"/>` + mushroom(374, 336, .9) + butterfly(440, 284, .6, "#ffd84d", "#ff9f43") +
   flower(132, 346, "#ff6b9a", .9) + flower(338, 352, "#b98cff", .8) + flower(196, 352, "#fff", .8) + flower(250, 356, "#ffc93c", .7);
 
-const coneFriends = () => sky("#ffe3ef", "#fff7fb") + sprinkles(17, 60, 0, 0, 480, 360, ["#ffb3d1", "#ffd36b", "#9fd5ff", "#b8e6c9"]) +
-  `<rect y="318" width="480" height="42" fill="#ffd6a5"/>` +
-  coneAt("a", 124, 226, 334, 46) + `<circle cx="124" cy="198" r="52" fill="#fff3d6"/>` + scoopDrip(124, 218, 98, "#fff3d6") + happyEye(106, 196) + happyEye(142, 196) + cheek(96, 212) + cheek(152, 212) + smile(124, 214, 8) +
-  coneAt("b", 240, 206, 334, 52) + `<circle cx="240" cy="176" r="58" fill="#8b5a3c"/>` + scoopDrip(240, 198, 110, "#8b5a3c") + sprinkles(23, 12, 204, 128, 72, 30) + eye(220, 174, 8) + eye(260, 174, 8) + cheek(206, 192) + cheek(274, 192) + smile(240, 192, 10) + cherry(240, 112) +
-  coneAt("c", 356, 226, 334, 46) + `<circle cx="356" cy="198" r="52" fill="#9ee6c4"/>` + scoopDrip(356, 218, 98, "#9ee6c4") + eye(340, 194, 7) + happyEye(374, 196) + cheek(328, 212) + cheek(384, 212) + smile(356, 212, 8);
 
-const milkshake = () => {
-  let checks = ""; for (let i = 0; i < 12; i++) checks += `<rect x="${i * 40}" y="${i % 2 ? 318 : 339}" width="40" height="21" fill="#ff8fb1"/>`;
-  return sky("#c9f2ef", "#f2fffd") + sprinkles(29, 30, 0, 0, 480, 300, ["#fff", "#ffd36b", "#ff9ec4"]) +
-    `<rect y="318" width="480" height="42" fill="#fff"/>` + checks +
-    `<rect x="262" y="18" width="16" height="130" rx="8" fill="#fff" transform="rotate(14 270 140)"/><g transform="rotate(14 270 140)" fill="#ff5d73"><rect x="262" y="30" width="16" height="14"/><rect x="262" y="62" width="16" height="14"/><rect x="262" y="94" width="16" height="14"/></g>` +
-    `<path d="M168 112 L312 112 L294 300 L186 300Z" fill="#e8f6ff"/><path d="M174 140 L306 140 L292 296 L188 296Z" fill="#ff9ec4"/>` +
-    `<circle cx="196" cy="112" r="26" fill="#fff"/><circle cx="240" cy="98" r="30" fill="#fff"/><circle cx="284" cy="112" r="26" fill="#fff"/><circle cx="220" cy="84" r="20" fill="#fff"/><circle cx="260" cy="84" r="20" fill="#fff"/>` +
-    sprinkles(31, 10, 200, 76, 80, 40) + cherry(240, 62) +
-    `<path d="M186 160 L196 270" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".6"/>` +
-    `<rect x="214" y="298" width="52" height="12" rx="6" fill="#bfe7fb"/><ellipse cx="240" cy="314" rx="62" ry="8" fill="#a6dcf5"/>` +
-    eye(220, 206, 9) + eye(260, 206, 9) + cheek(204, 226) + cheek(276, 226) + smile(240, 224, 11);
-};
 
-const truck = () => sky("#a8dcff", "#e9f7ff") + sun(70, 62, 26) + cloud(390, 56, .9) + cloud(250, 40, .55) +
-  `<rect y="252" width="480" height="30" fill="#a7e07a"/><rect y="282" width="480" height="78" fill="#8e8aa0"/><g fill="#fff">${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${i * 90 + 10}" y="324" width="50" height="8" rx="4"/>`).join("")}</g>` +
-  coneAt("t", 214, 104, 152, 22) + `<circle cx="214" cy="90" r="27" fill="#ff9ec4"/>` + sprinkles(37, 6, 196, 72, 36, 20) + cherry(214, 62) +
-  `<rect x="96" y="150" width="256" height="136" rx="24" fill="#fff" stroke="#ffd0e0" stroke-width="4"/><rect x="330" y="188" width="78" height="98" rx="20" fill="#ff9ec4"/>` +
-  `<rect x="346" y="200" width="46" height="38" rx="8" fill="#bfe7fb"/><circle cx="398" cy="262" r="8" fill="#ffe066"/>` +
-  `<rect x="124" y="180" width="160" height="64" rx="10" fill="#bfe7fb"/>` +
-  `<circle cx="204" cy="226" r="24" fill="#ffd9b0"/><path d="M182 214 q22 -24 44 0 Z" fill="#7a4b2a"/>` + eye(196, 224, 4.5) + eye(212, 224, 4.5) + smile(204, 234, 6) + cheek(190, 234) + cheek(218, 234) +
-  `<rect x="124" y="236" width="160" height="10" rx="3" fill="#e9a95c"/>` +
-  `<g>${Array.from({ length: 8 }, (_, i) => `<circle cx="${132 + i * 21}" cy="176" r="12" fill="${i % 2 ? "#fff" : "#ff5d8f"}"/>`).join("")}</g><rect x="118" y="160" width="172" height="16" rx="6" fill="#ff5d8f"/>` +
-  `<rect x="96" y="256" width="312" height="12" fill="#ff9ec4"/>` +
-  `<circle cx="160" cy="288" r="28" fill="${INK}"/><circle cx="160" cy="288" r="11" fill="#d9d4e2"/><circle cx="340" cy="288" r="28" fill="${INK}"/><circle cx="340" cy="288" r="11" fill="#d9d4e2"/>`;
 
 const unicornFamily = () => {
   const r = rng(52); let hearts = "";
@@ -783,6 +723,134 @@ const dinoFriends = () => dinoSky("df") + sun(60, 54, 24) + softCloud(200, 40, .
   eggNest(420, 330, .8) + fern(474, 338, -40, .7) + rock(320, 340, 20) + mushroom(108, 346, .8) +
   butterfly(110, 270, .55, "#ffd84d", "#ff9f43") + dragonfly(260, 170, .55, "#e63950") +
   flower(250, 350, "#fff", .8) + flower(360, 352, "#ffc93c", .8) + flower(150, 354, "#ff8fc8", .7);
+
+/* ---- Detailed ice cream scenes ---- */
+const awning = (y, h, c1, c2) => `<g>${Array.from({ length: 12 }, (_, i) => `<rect x="${i * 40}" y="${y}" width="40" height="${h}" fill="${i % 2 ? c2 : c1}"/>`).join("")}${Array.from({ length: 12 }, (_, i) => `<circle cx="${i * 40 + 20}" cy="${y + h}" r="20" fill="${i % 2 ? c2 : c1}"/>`).join("")}</g>`;
+const bunting = (y, colors) => `<path d="M-10 ${y} Q120 ${y + 26} 240 ${y} T490 ${y}" stroke="#8a7a96" stroke-width="2.5" fill="none"/>` +
+  Array.from({ length: 12 }, (_, i) => { const x = 10 + i * 40, yy = y + 13 * Math.sin(Math.PI * ((x % 250) / 250)) + 2; return `<path d="M${x - 12} ${f1(yy)} L${x + 12} ${f1(yy)} L${x} ${f1(yy + 26)}Z" fill="${colors[i % colors.length]}"/>`; }).join("");
+const balloonBunch = (x, y, s, colors) => at(x, y, s, `<path d="M-24 -10 Q-8 40 0 70 M0 -20 V70 M24 -10 Q8 40 0 70" stroke="#8a7a96" stroke-width="2" fill="none"/>` +
+  [[-24, -30, 0], [24, -30, 1], [0, -48, 2]].map(([bx, by, i]) => `<ellipse cx="${bx}" cy="${by}" rx="20" ry="25" fill="${colors[i]}"/><path d="M${bx - 4} ${by + 25} l4 6 l4 -6Z" fill="${colors[i]}"/><ellipse cx="${bx - 7}" cy="${by - 9}" rx="5" ry="8" fill="#fff" opacity=".4"/>`).join(""));
+const lollipop = (x, y, s, c) => at(x, y, s, `<rect x="-3" y="0" width="6" height="56" rx="3" fill="#fff"/><circle cx="0" cy="-12" r="22" fill="${c}"/><path d="M0 -12 m-14 0 a14 14 0 1 1 14 14 a9 9 0 1 1 -9 -9 a4 4 0 1 1 4 4" stroke="#fff" stroke-width="4" fill="none"/>`);
+const candy = (x, y, s, c, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M-16 0 L-30 -10 L-28 10Z M16 0 L30 -10 L28 10Z" fill="${c}"/><ellipse rx="17" ry="12" fill="${c}"/><path d="M-8 -10 Q0 0 -8 10 M6 -10 Q14 0 6 10" stroke="#fff" stroke-width="3" fill="none" opacity=".7"/></g>`;
+const donut = (x, y, s, icing) => at(x, y, s, `<circle r="26" fill="#e3a65c"/><path d="M-24 -4 Q-26 -24 0 -25 Q26 -24 24 -4 Q20 6 12 2 Q6 10 0 4 Q-8 10 -12 2 Q-20 6 -24 -4Z" fill="${icing}"/><circle r="9" fill="#c9843a"/><circle r="7" fill="#fff3e0"/>` + sprinkles(Math.round(x + y), 8, -20, -20, 40, 18));
+const checker = (y, h, size, c1, c2) => { let s = `<rect y="${y}" width="480" height="${h}" fill="${c1}"/>`; for (let r = 0; r * size < h; r++) for (let c = 0; c * size < 480; c++) if ((r + c) % 2) s += `<rect x="${c * size}" y="${y + r * size}" width="${size}" height="${size}" fill="${c2}"/>`; return s; };
+const umbrella = (x, y, s) => at(x, y, s, `<path d="M0 0 L-6 140" stroke="#9b6a43" stroke-width="6" stroke-linecap="round"/>` +
+  [0, 1, 2, 3, 4].map(i => { const a0 = Math.PI + i * Math.PI / 5, a1 = a0 + Math.PI / 5; return `<path d="M0 0 L${f1(Math.cos(a0) * 90)} ${f1(Math.sin(a0) * 46)} Q${f1(Math.cos((a0 + a1) / 2) * 80)} ${f1(Math.sin((a0 + a1) / 2) * 36)} ${f1(Math.cos(a1) * 90)} ${f1(Math.sin(a1) * 46)}Z" fill="${i % 2 ? "#fff" : "#ff5d73"}"/>`; }).join("") + `<circle cy="-46" r="5" fill="#ffd84d"/>`);
+const beachBall = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/><path d="M${x} ${y - r} A${r} ${r} 0 0 1 ${x + r} ${y} L${x} ${y}Z" fill="#ff5d73"/><path d="M${x} ${y + r} A${r} ${r} 0 0 1 ${x - r} ${y} L${x} ${y}Z" fill="#6fc2ff"/><path d="M${x + r} ${y} A${r} ${r} 0 0 1 ${x} ${y + r} L${x} ${y}Z" fill="#ffd84d"/><circle cx="${x}" cy="${y}" r="${f1(r * .2)}" fill="#fff"/><circle cx="${f1(x - r * .45)}" cy="${f1(y - r * .45)}" r="${f1(r * .15)}" fill="#fff" opacity=".7"/>`;
+const sandcastle = (x, y, s) => at(x, y, s, `<rect x="-40" y="-30" width="80" height="40" fill="#f2c97a"/><rect x="-46" y="-56" width="24" height="66" fill="#f6d58e"/><rect x="22" y="-56" width="24" height="66" fill="#f6d58e"/><rect x="-14" y="-74" width="28" height="44" fill="#f6d58e"/>` +
+  [-46, -38, -30, 22, 30, 38, -14, -4, 6].map((bx, i) => `<rect x="${bx}" y="${i > 5 ? -82 : -64}" width="8" height="8" fill="#f6d58e"/>`).join("") + `<path d="M-10 10 V-8 a10 10 0 0 1 20 0 V10Z" fill="#c9a058"/><path d="M0 -74 V-96 l14 5 l-14 5" stroke="#8a7a96" stroke-width="2" fill="#ff5d73"/>`);
+const ferris = (x, y, s) => at(x, y, s, `<path d="M-50 150 L0 0 L50 150" stroke="#b9a8e4" stroke-width="8" fill="none" stroke-linecap="round"/><circle r="92" fill="none" stroke="#9b8ad6" stroke-width="6"/>` +
+  Array.from({ length: 8 }, (_, i) => { const a = i / 8 * Math.PI * 2, cx = Math.cos(a) * 92, cy = Math.sin(a) * 92; return `<line x1="0" y1="0" x2="${f1(cx)}" y2="${f1(cy)}" stroke="#b9a8e4" stroke-width="3"/><rect x="${f1(cx - 13)}" y="${f1(cy)}" width="26" height="20" rx="6" fill="${["#ff5d8f", "#ffc93c", "#6fc2ff", "#4cc79c"][i % 4]}"/>`; }).join("") + `<circle r="10" fill="#9b8ad6"/>`);
+const popcorn = (x, y, s) => at(x, y, s, `${[[-18, -36], [0, -44], [18, -36], [-10, -50], [10, -52], [-24, -26], [24, -26]].map(([px, py]) => `<circle cx="${px}" cy="${py}" r="11" fill="#fff6d6"/>`).join("")}<path d="M-28 -26 L28 -26 L22 30 L-22 30Z" fill="#fff"/><path d="M-20 -26 L-16 30 M-4 -26 L-4 30 M12 -26 L10 30" stroke="#e63950" stroke-width="7"/>`);
+const cottonCandy = (x, y, s) => at(x, y, s, `<path d="M-4 0 L4 0 L1 70 L-1 70Z" fill="#e3b77a"/><circle cx="-16" cy="-12" r="22" fill="#ffb3d9"/><circle cx="14" cy="-16" r="24" fill="#ffc9e4"/><circle cx="0" cy="-36" r="22" fill="#ffb3d9"/><circle cx="-6" cy="-40" r="8" fill="#fff" opacity=".4"/>`);
+const stringLights = (y, seed) => { const r = rng(seed); let s = `<path d="M-10 ${y} Q60 ${y + 24} 120 ${y} T240 ${y} T360 ${y} T490 ${y}" stroke="#5a4a6a" stroke-width="2" fill="none"/>`; for (let i = 0; i < 16; i++) { const x = i * 31 + 6, yy = y + 12 * Math.abs(Math.sin(Math.PI * x / 120)); s += `<ellipse cx="${x}" cy="${f1(yy + 8)}" rx="6" ry="9" fill="${["#ff5d8f", "#ffd84d", "#6fc2ff", "#4cc79c", "#b98cff"][i % 5]}"/><circle cx="${x}" cy="${f1(yy + 8)}" r="12" fill="${["#ff5d8f", "#ffd84d", "#6fc2ff", "#4cc79c", "#b98cff"][i % 5]}" opacity=".18"/>`; } return s; };
+const roundTree = (x, y, s, c = "#5cbd57") => at(x, y, s, `<rect x="-7" y="-10" width="14" height="70" rx="4" fill="#9b6a43"/><circle cx="-20" cy="-20" r="30" fill="${c}"/><circle cx="20" cy="-24" r="30" fill="${c}"/><circle cx="0" cy="-50" r="34" fill="${c}"/><circle cx="-10" cy="-56" r="12" fill="#fff" opacity=".2"/>`);
+const bench = (x, y, s) => at(x, y, s, `<rect x="-50" y="-30" width="100" height="10" rx="3" fill="#c48d55"/><rect x="-50" y="-16" width="100" height="10" rx="3" fill="#c48d55"/><rect x="-54" y="0" width="108" height="10" rx="3" fill="#d9a46a"/><path d="M-40 10 V30 M40 10 V30" stroke="#5a4a6a" stroke-width="6" stroke-linecap="round"/>`);
+const vase = (x, y, s) => at(x, y, s, `<path d="M-14 0 Q-22 30 -10 44 L10 44 Q22 30 14 0Z" fill="#6fc2ff"/><path d="M0 0 Q-10 -30 -20 -40 M0 0 V-46 M0 0 Q10 -30 22 -38" stroke="#4f9d38" stroke-width="3" fill="none"/>` + hibiscus(-20, -44, .6, "#ff6b9a") + hibiscus(0, -50, .6, "#ffc93c") + hibiscus(22, -42, .6, "#ff8fc8"));
+const shopShelf = (x, y) => `<rect x="${x}" y="${y}" width="96" height="8" rx="3" fill="#c48d55"/><rect x="${x}" y="${y + 70}" width="96" height="8" rx="3" fill="#c48d55"/>` +
+  [[10, "#ff9ec4"], [42, "#ffd36b"], [74, "#9fd5ff"]].map(([jx, c], i) => `<rect x="${x + jx - 12}" y="${y - 40}" width="26" height="40" rx="6" fill="#eaf8ff" opacity=".9"/><rect x="${x + jx - 10}" y="${y - 26}" width="22" height="24" rx="4" fill="${c}"/>${sprinkles(30 + i, 5, x + jx - 9, y - 24, 20, 20, ["#fff", "#ff5d8f", "#4cc79c"])}<rect x="${x + jx - 13}" y="${y - 46}" width="28" height="8" rx="3" fill="#e63950"/>`).join("") +
+  [[14, "#e63950"], [44, "#6f5bd6"], [76, "#4cc79c"]].map(([jx, c]) => lollipop(x + jx, y + 26, .6, c)).join("");
+
+const iceCream = () =>
+  `<defs><linearGradient id="icw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9f5e6"/><stop offset="1" stop-color="#eafff7"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#icw)"/>` + Array.from({ length: 60 }, (_, i) => `<circle cx="${(i % 10) * 50 + (Math.floor(i / 10) % 2 ? 25 : 0)}" cy="${Math.floor(i / 10) * 50 + 70}" r="5" fill="#b4ecd8"/>`).join("") +
+  awning(0, 34, "#ff8fb8", "#fff") + shopShelf(4, 150) +
+  // donut stand on the right
+  `<rect x="404" y="270" width="64" height="10" rx="4" fill="#c48d55"/><rect x="432" y="180" width="8" height="92" fill="#c48d55"/>` + donut(436, 248, .9, "#ff9ec4") + donut(436, 200, .8, "#8b5a3c") + donut(436, 158, .7, "#ffd36b") +
+  `<rect y="300" width="480" height="60" fill="#ffc3d8"/><rect y="300" width="480" height="12" fill="#ff9ec4"/><path d="M0 330 h480" stroke="#ffb0cb" stroke-width="3"/>` +
+  cone(206, 334) +
+  `<circle cx="240" cy="184" r="64" fill="#9ee6c4"/>` + scoopDrip(240, 206, 132, "#9ee6c4") +
+  eye(220, 188, 8) + eye(260, 188, 8) + cheek(206, 204) + cheek(274, 204) + smile(240, 202, 10) +
+  `<circle cx="240" cy="122" r="54" fill="#ff9ec4"/>` + scoopDrip(240, 150, 104, "#ff9ec4") +
+  sprinkles(5, 16, 200, 88, 80, 50) + cherry(240, 66) +
+  lollipop(40, 318, .8, "#6fc2ff") + candy(96, 336, .8, "#ffd36b", -20) + candy(150, 346, .7, "#b98cff", 15) + candy(330, 340, .8, "#4cc79c", 10) + donut(404, 330, .7, "#b98cff") + candy(462, 340, .7, "#ff5d8f", -15);
+
+const popsicle = () =>
+  `<defs><linearGradient id="bsk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd0ff"/><stop offset="1" stop-color="#e2f6ff"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#bsk)"/>` + `<circle cx="410" cy="56" r="60" fill="#fff4b8" opacity=".6"/>` + sun(410, 56, 28) + softCloud(110, 50, .8) + softCloud(250, 36, .5) + birds([[180, 80, 1], [206, 70, .8], [300, 96, .7]]) +
+  `<rect y="178" width="480" height="70" fill="#3fa9e8"/><path d="M0 190 Q30 182 60 190 T120 190 T180 190 T240 190 T300 190 T360 190 T420 190 T480 190" stroke="#8fd8ff" stroke-width="4" fill="none"/>` +
+  `<path d="M300 172 L330 172 L322 150Z" fill="#fff"/><path d="M290 176 h52 l-8 8 h-36Z" fill="#e63950"/>` +
+  `<path d="M0 238 Q30 228 60 238 T120 238 T180 238 T240 238 T300 238 T360 238 T420 238 T480 238 V360 H0Z" fill="#f6dfa6"/><path d="M0 240 Q30 232 60 240 T120 240 T180 240 T240 240 T300 240 T360 240 T420 240 T480 240" stroke="#fff" stroke-width="5" fill="none" opacity=".8"/>` +
+  umbrella(70, 186, 1) + `<rect x="10" y="300" width="110" height="36" rx="4" fill="#6fc2ff"/><path d="M10 312 h110 M10 324 h110" stroke="#fff" stroke-width="5"/>` +
+  `<rect x="223" y="244" width="34" height="92" rx="17" fill="#e3b77a"/><path d="M236 300 h8" stroke="#c99a58" stroke-width="3" stroke-linecap="round"/>` +
+  `<defs><clipPath id="pp"><rect x="172" y="54" width="136" height="204" rx="64"/></clipPath></defs>` +
+  `<g clip-path="url(#pp)"><rect x="160" y="40" width="160" height="80" fill="#ff5d73"/><rect x="160" y="120" width="160" height="70" fill="#ffa94d"/><rect x="160" y="190" width="160" height="80" fill="#b388eb"/></g>` +
+  `<ellipse cx="206" cy="266" rx="9" ry="12" fill="#b388eb"/><ellipse cx="274" cy="262" rx="7" ry="9" fill="#b388eb"/>` +
+  `<rect x="190" y="78" width="16" height="92" rx="8" fill="#fff" opacity=".35"/>` +
+  eye(218, 158, 9) + eye(262, 158, 9) + cheek(204, 176) + cheek(276, 176) + smile(240, 174, 12) +
+  beachBall(372, 290, 30) + sandcastle(436, 336, .8) + at(150, 336, .6, crab()) + `<path d="${starD(330, 344, 14, 6)}" fill="#ff9f43" stroke="#ff9f43" stroke-width="4" stroke-linejoin="round"/>` + shell(290, 348, .9, "#ffb3d1") + shell(190, 350, .7, "#fff");
+
+const sundae = () =>
+  `<rect width="480" height="360" fill="#f1e6ff"/>` + Array.from({ length: 12 }, (_, i) => `<rect x="${i * 40 + 14}" y="0" width="12" height="300" fill="#e7d9fb"/>`).join("") +
+  // window with curtains on the left
+  `<rect x="18" y="40" width="124" height="130" rx="8" fill="#fff"/><rect x="28" y="50" width="104" height="110" fill="#9fdcff"/>` + `<g clip-path="url(#win)"><defs><clipPath id="win"><rect x="28" y="50" width="104" height="110"/></clipPath></defs>${cloud(70, 90, .6)}${sun(116, 72, 12)}<path d="M28 140 Q80 124 132 140 V160 H28Z" fill="#a7e07a"/></g><path d="M80 50 V160 M28 105 H132" stroke="#fff" stroke-width="5"/>` +
+  `<path d="M10 36 Q30 110 20 176 L46 176 Q40 110 50 36Z M150 36 Q130 110 140 176 L114 176 Q120 110 110 36Z" fill="#ff8fb8"/><rect x="4" y="30" width="152" height="10" rx="5" fill="#c48d55"/>` +
+  // hanging plant and a framed heart on the right
+  `<path d="M420 0 V40" stroke="#8a7a96" stroke-width="2"/><path d="M396 40 h48 l-6 30 h-36Z" fill="#ffb86b"/><path d="M402 70 q-10 30 -4 54 M420 70 q2 34 -2 60 M438 70 q10 26 4 50" stroke="#4cae52" stroke-width="5" fill="none" stroke-linecap="round"/>` +
+  [[398, 100], [418, 116], [442, 104], [404, 120], [436, 124]].map(([lx, ly]) => `<ellipse cx="${lx}" cy="${ly}" rx="7" ry="4" fill="#5fbf5a"/>`).join("") +
+  `<rect x="330" y="70" width="56" height="60" rx="4" fill="#fff" stroke="#c48d55" stroke-width="5"/><path transform="translate(358 88) scale(1.3)" d="M0 4 C0 -2 -9 -2 -9 4 C-9 10 0 14 0 18 C0 14 9 10 9 4 C9 -2 0 -2 0 4Z" fill="#ff5d8f"/>` +
+  checker(300, 60, 24, "#fff", "#ff9ec4") + `<rect y="296" width="480" height="8" fill="#ff7aa8"/>` +
+  `<circle cx="196" cy="192" r="42" fill="#fff3d6"/><circle cx="284" cy="192" r="42" fill="#8b5a3c"/><circle cx="240" cy="160" r="48" fill="#ff9ec4"/>` +
+  `<circle cx="240" cy="112" r="28" fill="#fff"/><circle cx="240" cy="90" r="20" fill="#fff"/><circle cx="240" cy="74" r="12" fill="#fff"/>` + cherry(240, 58) +
+  `<rect x="290" y="96" width="16" height="86" rx="4" fill="#e9a95c" transform="rotate(24 298 140)"/>` +
+  sprinkles(3, 14, 200, 130, 80, 50) + eye(222, 160, 8) + eye(258, 160, 8) + smile(240, 174, 9) +
+  `<path d="M146 198 Q150 284 240 284 Q330 284 334 198 Z" fill="#bfe7fb" opacity=".95"/><ellipse cx="240" cy="198" rx="94" ry="11" fill="#e4f6ff"/>` +
+  `<path d="M168 214 Q174 260 214 270" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" opacity=".7"/>` +
+  `<rect x="229" y="282" width="22" height="22" fill="#bfe7fb"/><ellipse cx="240" cy="306" rx="54" ry="10" fill="#a6dcf5"/>` +
+  vase(420, 296, 1.1) + `<path d="M48 330 L120 318 L124 330 L52 342Z" fill="#fff"/><path d="M60 312 q30 -4 50 10" stroke="#c9ccd6" stroke-width="7" fill="none" stroke-linecap="round"/><ellipse cx="52" cy="310" rx="10" ry="7" fill="#c9ccd6"/>` +
+  `<ellipse cx="350" cy="334" rx="26" ry="10" fill="#fff"/>` + cherry(340, 326).replace(/r="15"/, 'r="9"') + cherry(358, 328).replace(/r="15"/, 'r="9"');
+
+const coneFriends = () =>
+  `<defs><linearGradient id="cfs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdcff"/><stop offset="1" stop-color="#fff0f6"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#cfs)"/>` + softCloud(250, 70, .6) +
+  ferris(410, 150, .9) +
+  `<path d="M0 120 L50 60 L100 120Z" fill="#ff5d73"/><path d="M50 60 L50 120 M25 90 L50 120 M75 90 L50 120" stroke="#fff" stroke-width="10"/><rect x="0" y="120" width="100" height="90" fill="#ffe0ea"/><path d="M20 210 V150 a30 30 0 0 1 60 0 V210Z" fill="#ff5d73"/><path d="M50 60 V40 l16 6 l-16 6" stroke="#8a7a96" stroke-width="2" fill="#ffd84d"/>` +
+  bunting(14, ["#ff5d8f", "#ffc93c", "#6fc2ff", "#4cc79c", "#b98cff"]) + balloonBunch(150, 110, .7, ["#ff5d73", "#ffd84d", "#6fc2ff"]) +
+  `<path d="M0 230 Q240 214 480 230 V360 H0Z" fill="#ffd9a8"/>` + sprinkles(17, 50, 0, 240, 480, 120, ["#ff9ec4", "#ffd36b", "#9fd5ff", "#b8e6c9"]) +
+  coneAt("a", 124, 226, 334, 46) + `<circle cx="124" cy="198" r="52" fill="#fff3d6"/>` + scoopDrip(124, 218, 98, "#fff3d6") + happyEye(106, 196) + happyEye(142, 196) + cheek(96, 212) + cheek(152, 212) + smile(124, 214, 8) +
+  coneAt("b", 240, 206, 334, 52) + `<circle cx="240" cy="176" r="58" fill="#8b5a3c"/>` + scoopDrip(240, 198, 110, "#8b5a3c") + sprinkles(23, 12, 204, 128, 72, 30) + eye(220, 174, 8) + eye(260, 174, 8) + cheek(206, 192) + cheek(274, 192) + smile(240, 192, 10) + cherry(240, 112) +
+  coneAt("c", 356, 226, 334, 46) + `<circle cx="356" cy="198" r="52" fill="#9ee6c4"/>` + scoopDrip(356, 218, 98, "#9ee6c4") + eye(340, 194, 7) + happyEye(374, 196) + cheek(328, 212) + cheek(384, 212) + smile(356, 212, 8) +
+  popcorn(40, 330, .9) + cottonCandy(446, 300, .8) + lollipop(190, 320, .55, "#b98cff") + lollipop(300, 324, .5, "#4cc79c");
+
+const milkshake = () =>
+  `<rect width="480" height="320" fill="#c9f2ef"/>` + Array.from({ length: 8 }, (_, i) => `<rect x="${i * 64}" y="0" width="32" height="320" fill="#bdebe7"/>`).join("") +
+  stringLights(6, 3) +
+  // menu board on the left with an ice cream picture
+  `<rect x="14" y="70" width="104" height="120" rx="8" fill="#3b2a4a"/><rect x="22" y="78" width="88" height="104" rx="4" fill="#4a3a5c"/>` + at(66, 132, .5, `<path d="M-30 0 L30 0 L0 60Z" fill="#e9a95c"/><circle cx="0" cy="-14" r="28" fill="#ff9ec4"/><circle cx="0" cy="-50" r="8" fill="#e63950"/>`) +
+  `<path d="M30 168 h70 M30 176 h50" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/>` +
+  // jar of straws and a stool on the right
+  `<rect x="380" y="200" width="44" height="70" rx="8" fill="#eaf8ff" opacity=".9"/>` + [[388, "#ff5d73"], [398, "#6fc2ff"], [408, "#ffd84d"], [416, "#4cc79c"]].map(([sx, c], i) => `<rect x="${sx}" y="${150 + i * 6}" width="6" height="110" rx="3" fill="${c}" transform="rotate(${(i - 1.5) * 6} ${sx} 260)"/>`).join("") +
+  `<rect x="410" y="270" width="70" height="10" rx="4" fill="#c48d55"/>` + donut(452, 250, .7, "#ff9ec4") +
+  `<path d="${starD(440, 110, 30, 13)}" fill="#ffd84d" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>` +
+  `<rect y="270" width="480" height="50" fill="#ff9ec4"/><rect y="270" width="480" height="10" fill="#ff7aa8"/>` +
+  checker(320, 40, 20, "#fff", "#3b2a4a") +
+  `<rect x="262" y="18" width="16" height="130" rx="8" fill="#fff" transform="rotate(14 270 140)"/><g transform="rotate(14 270 140)" fill="#ff5d73"><rect x="262" y="30" width="16" height="14"/><rect x="262" y="62" width="16" height="14"/><rect x="262" y="94" width="16" height="14"/></g>` +
+  `<path d="M168 112 L312 112 L294 300 L186 300Z" fill="#e8f6ff"/><path d="M174 140 L306 140 L292 296 L188 296Z" fill="#ff9ec4"/>` +
+  `<circle cx="196" cy="112" r="26" fill="#fff"/><circle cx="240" cy="98" r="30" fill="#fff"/><circle cx="284" cy="112" r="26" fill="#fff"/><circle cx="220" cy="84" r="20" fill="#fff"/><circle cx="260" cy="84" r="20" fill="#fff"/>` +
+  sprinkles(31, 10, 200, 76, 80, 40) + cherry(240, 62) +
+  `<path d="M186 160 L196 270" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".6"/>` +
+  `<rect x="214" y="298" width="52" height="12" rx="6" fill="#bfe7fb"/><ellipse cx="240" cy="314" rx="62" ry="8" fill="#a6dcf5"/>` +
+  eye(220, 206, 9) + eye(260, 206, 9) + cheek(204, 226) + cheek(276, 226) + smile(240, 224, 11) +
+  candy(70, 300, .8, "#ffd36b", -10) + candy(120, 296, .7, "#b98cff", 20) + lollipop(350, 290, .5, "#e63950");
+
+const truck = () =>
+  `<defs><linearGradient id="tks" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#eaf8ff"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#tks)"/>` + sun(250, 46, 22) + softCloud(380, 50, .8) + softCloud(170, 70, .5) + birds([[300, 90, .8], [322, 82, .7]]) +
+  `<path d="M0 200 Q120 176 240 192 T480 186 V260 H0Z" fill="#c4e88a"/>` + [[150, 190], [330, 184], [180, 194]].map(([x, y]) => `<rect x="${x - 2}" y="${y - 4}" width="4" height="12" fill="#7d5232"/><circle cx="${x}" cy="${y - 10}" r="12" fill="#5aa84f"/>`).join("") +
+  roundTree(44, 196, 1.1) + roundTree(446, 190, 1, "#4fae4f") + bench(430, 252, .7) + balloonBunch(60, 90, .6, ["#ff5d73", "#ffd84d", "#b98cff"]) +
+  `<rect y="252" width="480" height="30" fill="#a7e07a"/>` + grassBlades(106, 40, 0, 254, 480, 24) +
+  `<rect y="282" width="480" height="78" fill="#8e8aa0"/><g fill="#fff">${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${i * 90 + 10}" y="324" width="50" height="8" rx="4"/>`).join("")}</g>` +
+  coneAt("t", 214, 104, 152, 22) + `<circle cx="214" cy="90" r="27" fill="#ff9ec4"/>` + sprinkles(37, 6, 196, 72, 36, 20) + cherry(214, 62) +
+  `<rect x="96" y="150" width="256" height="136" rx="24" fill="#fff" stroke="#ffd0e0" stroke-width="4"/><rect x="330" y="188" width="78" height="98" rx="20" fill="#ff9ec4"/>` +
+  `<rect x="346" y="200" width="46" height="38" rx="8" fill="#bfe7fb"/><circle cx="398" cy="262" r="8" fill="#ffe066"/>` +
+  `<rect x="124" y="180" width="160" height="64" rx="10" fill="#bfe7fb"/>` +
+  `<circle cx="204" cy="226" r="24" fill="#ffd9b0"/><path d="M182 214 q22 -24 44 0 Z" fill="#7a4b2a"/>` + eye(196, 224, 4.5) + eye(212, 224, 4.5) + smile(204, 234, 6) + cheek(190, 234) + cheek(218, 234) +
+  `<rect x="124" y="236" width="160" height="10" rx="3" fill="#e9a95c"/>` +
+  `<g>${Array.from({ length: 8 }, (_, i) => `<circle cx="${132 + i * 21}" cy="176" r="12" fill="${i % 2 ? "#fff" : "#ff5d8f"}"/>`).join("")}</g><rect x="118" y="160" width="172" height="16" rx="6" fill="#ff5d8f"/>` +
+  `<rect x="96" y="256" width="312" height="12" fill="#ff9ec4"/>` + `<g transform="translate(118 268) scale(.5)"><path d="M-14 -40 L14 -40 L0 0Z" fill="#e9a95c"/><circle cx="0" cy="-48" r="16" fill="#9ee6c4"/></g><g transform="translate(300 268) scale(.5)"><path d="M-14 -40 L14 -40 L0 0Z" fill="#e9a95c"/><circle cx="0" cy="-48" r="16" fill="#ffd36b"/></g>` +
+  `<circle cx="160" cy="288" r="28" fill="${INK}"/><circle cx="160" cy="288" r="11" fill="#d9d4e2"/><circle cx="340" cy="288" r="28" fill="${INK}"/><circle cx="340" cy="288" r="11" fill="#d9d4e2"/>` +
+  `<rect x="0" y="330" width="80" height="30" fill="#a7e07a"/>` + flower(20, 346, "#ff8fc8", .8) + flower(54, 350, "#ffc93c", .7) + `<rect x="420" y="330" width="60" height="30" fill="#a7e07a"/>` + flower(440, 346, "#fff", .8) + flower(466, 350, "#b98cff", .7) +
+  butterfly(250, 130, .5, "#ffd84d", "#ff9f43");
 
 const THEMES = [
   { key: "photos", label: "My photos", tone: "#ff5d8f" },
