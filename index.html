@@ -975,8 +975,124 @@ const castle = () => {
     unicornAt(392, 282, .38) + unicornAt(84, 290, .36) + butterfly(180, 120, .5, "#ffd84d", "#ff9f43");
 };
 
+/* ---- Halloween (friendly, not scary) ---- */
+const jackO = (x, y, r, face = "smile") => pumpkin(x, y, r) + at(x, y, r / 30,
+  face === "smile"
+    ? `<path d="M-15 -8 L-7 -18 L1 -8Z M15 -8 L7 -18 L-1 -8Z" fill="#ffd84d" stroke="#8a3d0a" stroke-width="1.5" stroke-linejoin="round" transform="translate(0 -1)"/><path d="M-16 6 Q0 22 16 6 L10 8 L8 13 L3 9 L0 14 L-3 9 L-8 13 L-10 8Z" fill="#ffd84d" stroke="#8a3d0a" stroke-width="1.5" stroke-linejoin="round"/>`
+    : `<circle cx="-9" cy="-6" r="4.5" fill="${INK}"/><circle cx="9" cy="-6" r="4.5" fill="${INK}"/><circle cx="-10.5" cy="-7.5" r="1.6" fill="#fff"/><circle cx="7.5" cy="-7.5" r="1.6" fill="#fff"/>` + smile(0, 6, 7) + cheek(-16, 4) + cheek(16, 4));
+const spook = (x, y, s, flip = 1) => at(x, y, s, `<g transform="scale(${flip} 1)"><path d="M-30 30 L-30 -6 Q-30 -40 0 -40 Q30 -40 30 -6 L30 30 Q24 22 18 30 Q12 38 6 30 Q0 22 -6 30 Q-12 38 -18 30 Q-24 22 -30 30Z" fill="#fff"/><path d="M-30 4 Q-44 2 -46 -10 M30 4 Q42 -2 44 -14" stroke="#fff" stroke-width="10" stroke-linecap="round" fill="none"/>` +
+  `<ellipse cx="-11" cy="-12" rx="5" ry="7" fill="${INK}"/><ellipse cx="11" cy="-12" rx="5" ry="7" fill="${INK}"/><circle cx="-12.5" cy="-14.5" r="2" fill="#fff"/><circle cx="9.5" cy="-14.5" r="2" fill="#fff"/><ellipse cx="0" cy="4" rx="5" ry="6" fill="${INK}"/>` + cheek(-20, -2) + cheek(20, -2) + `</g>`);
+const bat = (x, y, s) => at(x, y, s, `<path d="M-6 0 Q-20 -18 -44 -10 Q-38 -2 -40 8 Q-30 2 -24 10 Q-18 2 -8 8Z M6 0 Q20 -18 44 -10 Q38 -2 40 8 Q30 2 24 10 Q18 2 8 8Z" fill="#6a4a96"/><path d="M-10 -12 L-14 -24 L-4 -16Z M10 -12 L14 -24 L4 -16Z" fill="#5a3d82"/><circle r="14" fill="#5a3d82"/>` +
+  `<circle cx="-5" cy="-3" r="4" fill="#fff"/><circle cx="5" cy="-3" r="4" fill="#fff"/><circle cx="-4.5" cy="-2.5" r="2" fill="${INK}"/><circle cx="5.5" cy="-2.5" r="2" fill="${INK}"/><path d="M-4 6 Q0 9 4 6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>`);
+const moonFace = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r * 1.5}" fill="#fff8d0" opacity=".25"/><circle cx="${x}" cy="${y}" r="${r}" fill="#fff3b0"/>` + [[-.4, -.35, .18], [.35, .3, .14], [.45, -.4, .1]].map(([a, b, c]) => `<circle cx="${f1(x + a * r)}" cy="${f1(y + b * r)}" r="${f1(c * r)}" fill="#f2e08a"/>`).join("") +
+  `<circle cx="${f1(x - r * .25)}" cy="${f1(y - r * .05)}" r="${f1(r * .07)}" fill="${INK}"/><circle cx="${f1(x + r * .25)}" cy="${f1(y - r * .05)}" r="${f1(r * .07)}" fill="${INK}"/>` + smile(x, y + r * .22, r * .2) + cheek(x - r * .45, y + r * .2) + cheek(x + r * .45, y + r * .2);
+const blackCat = (x, y, s) => at(x, y, s, `<path d="M30 40 Q66 40 60 4 Q56 -12 46 -8" stroke="#3b2a4a" stroke-width="10" fill="none" stroke-linecap="round"/><ellipse cx="0" cy="28" rx="34" ry="30" fill="#3b2a4a"/><ellipse cx="-14" cy="54" rx="10" ry="6" fill="#3b2a4a"/><ellipse cx="14" cy="54" rx="10" ry="6" fill="#3b2a4a"/>` +
+  `<path d="M-26 -22 L-22 -54 L-4 -34Z M26 -22 L22 -54 L4 -34Z" fill="#3b2a4a"/><path d="M-22 -28 L-20 -46 L-10 -34Z M22 -28 L20 -46 L10 -34Z" fill="#ff9fb5"/><circle cy="-14" r="30" fill="#3b2a4a"/>` +
+  `<ellipse cx="-11" cy="-16" rx="8" ry="9" fill="#ffd84d"/><ellipse cx="11" cy="-16" rx="8" ry="9" fill="#ffd84d"/><ellipse cx="-11" cy="-15" rx="3" ry="6" fill="${INK}"/><ellipse cx="11" cy="-15" rx="3" ry="6" fill="${INK}"/><circle cx="-13" cy="-19" r="2" fill="#fff"/><circle cx="9" cy="-19" r="2" fill="#fff"/>` +
+  `<path d="M-3 -4 L3 -4 L0 0Z" fill="#ff9fb5"/><path d="M0 0 q-4 5 -8 2 M0 0 q4 5 8 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/><path d="M-12 -2 L-34 -6 M-12 2 L-34 4 M12 -2 L34 -6 M12 2 L34 4" stroke="#fff" stroke-width="1.6" opacity=".7" stroke-linecap="round"/>` + cheek(-20, -2) + cheek(20, -2));
+const witchHat = (x, y, s) => at(x, y, s, `<ellipse cx="0" cy="0" rx="44" ry="11" fill="#6a4a96"/><path d="M-26 -2 L4 -74 Q8 -80 10 -72 L26 -2Z" fill="#7b58b0"/><path d="M-24 -10 L24 -10 L26 -2 L-26 -2Z" fill="#ff9f2e"/><rect x="-6" y="-14" width="12" height="14" rx="2" fill="none" stroke="#ffd84d" stroke-width="3"/>`);
+const cauldron = (x, y, s) => at(x, y, s, `<path d="M-30 50 L-40 70 M30 50 L40 70" stroke="#3b2a4a" stroke-width="7" stroke-linecap="round"/>` +
+  `<path d="M-24 64 Q-12 40 0 64 Q12 40 24 64Z" fill="#ff9f2e"/><path d="M-14 64 Q-6 50 0 64 Q6 50 14 64Z" fill="#ffd84d"/>` +
+  `<path d="M-56 -6 Q-62 54 0 58 Q62 54 56 -6Z" fill="#3b2a4a"/><ellipse cx="0" cy="-6" rx="60" ry="14" fill="#52406a"/><ellipse cx="0" cy="-8" rx="50" ry="10" fill="#7be36a"/>` +
+  [[-24, -14, 9], [6, -18, 12], [28, -12, 7], [-6, -30, 6], [18, -36, 5], [-16, -44, 4]].map(([bx, by, r]) => `<circle cx="${bx}" cy="${by}" r="${r}" fill="#9cf58a"/><circle cx="${bx - r * .3}" cy="${by - r * .3}" r="${f1(r * .3)}" fill="#fff" opacity=".6"/>`).join("") +
+  `<path d="M-44 20 Q-40 40 -20 46" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".2"/>`);
+const candyCorn = (x, y, s, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M-14 12 Q-16 18 -8 18 L8 18 Q16 18 14 12 L3 -18 Q0 -24 -3 -18Z" fill="#fff4dc"/><path d="M-14 12 Q-16 18 -8 18 L8 18 Q16 18 14 12 L10 2 L-10 2Z" fill="#ffd23f"/><path d="M-10 2 L10 2 L6 -8 L-6 -8Z" fill="#ff8a1f"/><path d="M-10 6 L-6 -6" stroke="#fff" stroke-width="2" opacity=".5"/></g>`;
+const autumnLeaf = (x, y, s, c, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M0 0 L-6 -10 L-16 -8 L-10 -18 L-18 -26 L-6 -24 L0 -36 L6 -24 L18 -26 L10 -18 L16 -8 L6 -10Z" fill="${c}"/><path d="M0 4 V-28" stroke="#8a4a1a" stroke-width="1.8" opacity=".6"/></g>`;
+const leafScatter = (seed, n, x, y, w, h) => { const r = rng(seed); let s = ""; for (let i = 0; i < n; i++) s += autumnLeaf(f1(x + r() * w), f1(y + r() * h), f1(.5 + r() * .5), ["#ff8a1f", "#e8502e", "#ffc23f", "#c9682a"][i % 4], Math.round(r() * 360)); return s; };
+const owl = (x, y, s) => at(x, y, s, `<path d="M-20 -26 L-26 -46 L-8 -32Z M20 -26 L26 -46 L8 -32Z" fill="#9b6a43"/><ellipse cx="0" cy="0" rx="28" ry="34" fill="#9b6a43"/><ellipse cx="0" cy="12" rx="18" ry="20" fill="#e3c39a"/>` +
+  `<path d="M-8 6 l4 4 l4 -4 l4 4 l4 -4 M-10 16 l4 4 l4 -4 l4 4 l4 -4 l4 4" stroke="#b98a5a" stroke-width="2" fill="none"/>` +
+  `<circle cx="-11" cy="-12" r="11" fill="#fff"/><circle cx="11" cy="-12" r="11" fill="#fff"/>` + eye(-11, -11, 6) + eye(11, -11, 6) + `<path d="M-4 -4 L4 -4 L0 4Z" fill="#ff9f1c"/><path d="M-10 32 v6 M-4 32 v6 M4 32 v6 M10 32 v6" stroke="#ff9f1c" stroke-width="3" stroke-linecap="round"/>`);
+const curlyTree = (x, y, s, c = "#5a3d6a") => at(x, y, s, `<path d="M-14 0 Q-10 -60 -4 -110 L8 -110 Q14 -60 16 0Z" fill="${c}"/>` +
+  `<path d="M0 -90 Q-30 -110 -50 -100 Q-62 -94 -54 -84 M2 -100 Q20 -130 50 -124 Q62 -120 56 -110 M-2 -60 Q-40 -66 -60 -50 M4 -70 Q40 -80 60 -66 Q68 -60 62 -54 M0 -110 Q-6 -140 -22 -150" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"/>`);
+const spiderWeb = (x, y, s, flip = 1) => at(x, y, s, `<g transform="scale(${flip} 1)" stroke="#e8e0f0" stroke-width="2" fill="none" opacity=".9">${[0, 22, 45, 68, 90].map(a => `<line x1="0" y1="0" x2="${f1(Math.cos(a * Math.PI / 180) * 110)}" y2="${f1(Math.sin(a * Math.PI / 180) * 110)}"/>`).join("")}${[30, 55, 80, 105].map(r => `<path d="${[0, 22, 45, 68, 90].map((a, i) => (i ? "L" : "M") + f1(Math.cos(a * Math.PI / 180) * r) + " " + f1(Math.sin(a * Math.PI / 180) * r)).join(" ")}"/>`).join("")}</g>`);
+const spider = (x, y, s, len) => `<path d="M${x} ${y - len} V${y}" stroke="#e8e0f0" stroke-width="1.5"/>` + at(x, y, s, `<path d="M-8 -2 q-12 -8 -16 0 M-8 2 q-12 0 -16 8 M8 -2 q12 -8 16 0 M8 2 q12 0 16 8" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/><circle r="11" fill="${INK}"/><circle cx="-4" cy="-2" r="3.5" fill="#fff"/><circle cx="4" cy="-2" r="3.5" fill="#fff"/><circle cx="-4" cy="-1.5" r="1.6" fill="${INK}"/><circle cx="4" cy="-1.5" r="1.6" fill="${INK}"/><path d="M-3 5 Q0 7 3 5" stroke="#fff" stroke-width="1.5" fill="none"/>`);
+const scarecrow = (x, y, s) => at(x, y, s, `<rect x="-4" y="-20" width="8" height="150" fill="#9b6a43"/><rect x="-60" y="10" width="120" height="8" rx="3" fill="#9b6a43"/>` +
+  `<path d="M-60 6 l-12 -4 M-60 14 l-14 2 M-60 22 l-10 6 M60 6 l12 -4 M60 14 l14 2 M60 22 l10 6" stroke="#f2c94c" stroke-width="4" stroke-linecap="round"/>` +
+  `<path d="M-30 4 L30 4 L36 70 L-36 70Z" fill="#e8502e"/><path d="M-30 4 L-58 12 L-58 26 L-28 22Z M30 4 L58 12 L58 26 L28 22Z" fill="#e8502e"/><path d="M-12 4 V70 M12 4 V70 M-32 30 H32 M-34 52 H34" stroke="#c23a2a" stroke-width="4"/><rect x="-8" y="30" width="16" height="16" fill="#4fae4f"/>` +
+  `<path d="M-36 70 l-6 14 M-24 70 l-2 16 M24 70 l2 16 M36 70 l6 14" stroke="#f2c94c" stroke-width="4" stroke-linecap="round"/>` +
+  `<circle cy="-24" r="26" fill="#e9c98f"/><path d="M-10 -14 Q0 -6 10 -14" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M-8 -12 v4 M0 -10 v4 M8 -12 v4" stroke="${INK}" stroke-width="2"/>` + eye(-9, -28, 4) + eye(9, -28, 4) + `<path d="M-3 -22 L3 -22 L0 -16Z" fill="#ff8a1f"/>` + cheek(-16, -18) + cheek(16, -18) +
+  `<ellipse cy="-44" rx="40" ry="8" fill="#c9a058"/><path d="M-22 -46 L-16 -78 L16 -78 L22 -46Z" fill="#d9b06a"/><path d="M-21 -54 H21" stroke="#e8502e" stroke-width="6"/>`);
+const hayBale = (x, y, s) => at(x, y, s, `<rect x="-46" y="-26" width="92" height="52" rx="10" fill="#f2c94c"/><path d="M-30 -26 V26 M30 -26 V26" stroke="#c9a058" stroke-width="5"/><path d="M-40 -14 h12 M-20 -4 h16 M6 -16 h14 M-38 10 h10 M12 8 h16 M-14 16 h12" stroke="#d9b04a" stroke-width="3" stroke-linecap="round"/>`);
+const cornStalk = (x, y, s) => at(x, y, s, `<path d="M0 0 Q4 -80 -2 -170" stroke="#9fb34a" stroke-width="7" fill="none"/>` + [[-40, -1], [-80, 1], [-120, -1], [-150, 1]].map(([ly, d]) => `<path d="M0 ${ly} Q${d * 40} ${ly - 30} ${d * 56} ${ly - 4}" stroke="#b9c95a" stroke-width="8" fill="none" stroke-linecap="round"/>`).join("") + `<ellipse cx="8" cy="-96" rx="8" ry="20" fill="#ffd23f" transform="rotate(20 8 -96)"/><path d="M2 -82 Q12 -96 18 -118" stroke="#9fb34a" stroke-width="5" fill="none"/>`);
+const potion = (x, y, s, c) => at(x, y, s, `<rect x="-6" y="-34" width="12" height="14" fill="#e8e0f0"/><rect x="-8" y="-38" width="16" height="6" rx="2" fill="#9b6a43"/><path d="M-6 -22 Q-22 -14 -22 4 Q-22 20 0 20 Q22 20 22 4 Q22 -14 6 -22Z" fill="#e8f4ff" opacity=".9"/><path d="M-20 0 Q-20 18 0 18 Q20 18 20 0Z" fill="${c}"/><circle cx="-8" cy="-8" r="3" fill="#fff" opacity=".8"/>`);
+const candle = (x, y, s) => at(x, y, s, `<rect x="-8" y="-30" width="16" height="34" rx="3" fill="#fff4dc"/><path d="M-8 -26 q4 6 0 12" stroke="#ffe7b0" stroke-width="3" fill="none"/><path d="M0 -32 v-6" stroke="${INK}" stroke-width="2"/><path d="M0 -54 Q8 -44 0 -38 Q-8 -44 0 -54Z" fill="#ffd84d"/><circle cx="0" cy="-44" r="12" fill="#ffd84d" opacity=".25"/>`);
+const broom = (x, y, s, rot) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><rect x="-4" y="-120" width="8" height="130" rx="4" fill="#9b6a43"/><path d="M-6 6 L-22 70 L22 70 L6 6Z" fill="#f2c94c"/><path d="M-12 30 L-18 70 M0 30 V70 M12 30 L18 70" stroke="#d9b04a" stroke-width="3"/><rect x="-10" y="4" width="20" height="10" rx="3" fill="#e8502e"/></g>`;
+const halloweenCupcake = (x, y, s) => at(x, y, s, `<path d="M-22 0 L22 0 L16 30 L-16 30Z" fill="#7b58b0"/><path d="M-12 0 L-10 30 M0 0 V30 M12 0 L10 30" stroke="#6a4a96" stroke-width="3"/><path d="M-26 2 Q-28 -16 -10 -18 Q-6 -34 8 -26 Q26 -24 26 2Z" fill="#ff9f2e"/>` + candyCorn(2, -30, .6));
+const hauntedHouse = (x, y, s) => at(x, y, s,
+  `<rect x="-20" y="-150" width="16" height="40" fill="#5a3d6a"/>` +
+  `<rect x="-90" y="-90" width="180" height="130" fill="#8e6fc8"/><path d="M-104 -86 L0 -150 L104 -86Z" fill="#5a3d6a"/><path d="M-80 -96 L0 -144 M80 -96 L0 -144" stroke="#6e4f86" stroke-width="3"/>` +
+  `<rect x="44" y="-170" width="56" height="120" fill="#7b5cb4"/><path d="M36 -166 L72 -214 L108 -166Z" fill="#5a3d6a"/><circle cx="72" cy="-134" r="14" fill="#ffd84d"/><path d="M72 -148 V-120 M58 -134 H86" stroke="#7b5cb4" stroke-width="3"/>` +
+  `<path d="M72 -214 v-14" stroke="${INK}" stroke-width="3"/><path d="M72 -228 l14 4 l-14 5z" fill="#ff8a1f"/>` +
+  [[-68, -70], [-20, -70], [-68, -20]].map(([wx, wy]) => `<rect x="${wx}" y="${wy}" width="34" height="34" rx="4" fill="#ffd84d"/><path d="M${wx + 17} ${wy} V${wy + 34} M${wx} ${wy + 17} H${wx + 34}" stroke="#8e6fc8" stroke-width="3"/>`).join("") +
+  `<rect x="22" y="-40" width="34" height="34" rx="4" fill="#ffd84d"/>` + spook(39, -24, .34) +
+  `<path d="M-14 40 V0 a16 16 0 0 1 32 0 V40Z" fill="#5a3d6a"/><circle cx="12" cy="20" r="2.5" fill="#ffd84d"/><path d="M-24 40 h52 v8 h-52Z" fill="#6e4f86"/>`);
+
+const pumpkinPatch = () =>
+  `<defs><linearGradient id="hp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a6ad6"/><stop offset=".55" stop-color="#ff9fb0"/><stop offset="1" stop-color="#ffcf8a"/></linearGradient>` +
+  `<linearGradient id="hp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9cc65a"/><stop offset="1" stop-color="#6f9e3c"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#hp1)"/>` + sparkles(111, 10, 0, 0, 480, 90) + moonFace(400, 62, 34) + bat(170, 50, .7) + bat(240, 30, .5) + bat(300, 70, .45) +
+  `<path d="M0 200 Q120 176 240 192 T480 186 V360 H0Z" fill="#b6c96a"/>` +
+  `<g>${Array.from({ length: 13 }, (_, i) => `<rect x="${i * 38 + 4}" y="208" width="10" height="54" rx="3" fill="#a9784f"/>`).join("")}<rect y="218" width="480" height="7" rx="3" fill="#c48d55"/><rect y="244" width="480" height="7" rx="3" fill="#c48d55"/></g>` +
+  owl(118, 182, .7) + cornStalk(22, 300, 1) + cornStalk(52, 310, .9) + scarecrow(420, 196, .85) +
+  `<path d="M0 252 Q140 236 262 256 T480 250 V360 H0Z" fill="url(#hp2)"/>` + grassBlades(112, 70, 0, 258, 480, 102, ["#5f8f30", "#7aa83e"]) +
+  `<path d="M60 330 Q140 300 220 320 T400 316" stroke="#4f8f2f" stroke-width="5" fill="none"/><path d="M120 312 q10 -16 24 -10 M300 312 q-6 -18 10 -20" stroke="#4f8f2f" stroke-width="4" fill="none"/>` +
+  jackO(232, 270, 46) + jackO(140, 300, 28, "cute") + jackO(336, 300, 32, "cute") + pumpkin(300, 336, 20) + pumpkin(184, 340, 18) +
+  hayBale(50, 334, .8) + hayBale(440, 340, .7) + leafScatter(113, 10, 80, 300, 340, 56);
+
+const friendlyGhosts = () =>
+  `<defs><linearGradient id="hg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f3480"/><stop offset="1" stop-color="#8a6ad6"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#hg1)"/>` + sparkles(121, 22, 0, 0, 480, 170) + moonFace(84, 74, 46) + bat(200, 40, .6) + bat(300, 60, .5) + bat(260, 120, .4) +
+  `<path d="M0 230 Q120 206 240 222 T480 216 V360 H0Z" fill="#4f7f8a"/>` +
+  curlyTree(430, 268, 1.05) + owl(382, 180, .55) +
+  `<path d="M0 266 Q140 248 262 268 T480 262 V360 H0Z" fill="#5f9a7a"/>` + grassBlades(122, 60, 0, 270, 480, 90, ["#4a8a66", "#6aaa82"]) +
+  spook(220, 170, 1.4) + spook(120, 220, .8, -1) + spook(330, 222, .9) +
+  `<path d="M206 222 Q220 236 234 222" stroke="#fff" stroke-width="0"/>` + jackO(250, 250, 18, "cute").replace(/^/, "") +
+  `<path d="M232 236 Q250 218 268 236" stroke="#3b2a4a" stroke-width="3" fill="none"/>` +
+  jackO(46, 320, 30) + jackO(440, 326, 28) + mushroom(110, 338, .9) + mushroom(134, 346, .7) + candyCorn(200, 336, .9, -15) + candyCorn(290, 340, .9, 20) + candyCorn(350, 334, .8, -5) +
+  [[150, 280], [380, 290], [60, 250], [300, 300]].map(([fx, fy]) => `<circle cx="${fx}" cy="${fy}" r="6" fill="#fff38a" opacity=".35"/><circle cx="${fx}" cy="${fy}" r="2.5" fill="#fff38a"/>`).join("");
+
+const catCauldron = () =>
+  `<rect width="480" height="360" fill="#6a4f9e"/>` + Array.from({ length: 10 }, (_, i) => `<rect x="${i * 50 + 20}" y="0" width="22" height="270" fill="#634894"/>`).join("") +
+  `<rect x="172" y="30" width="136" height="110" rx="60" fill="#e8e0f0"/><rect x="182" y="40" width="116" height="100" rx="52" fill="#3f3480"/>` + `<g clip-path="url(#hwin)"><defs><clipPath id="hwin"><rect x="182" y="40" width="116" height="100" rx="52"/></clipPath></defs>${moonFace(260, 74, 22)}${sparkles(131, 6, 186, 44, 108, 90)}${bat(212, 100, .4)}</g><path d="M240 40 V140 M182 92 H298" stroke="#e8e0f0" stroke-width="5"/>` +
+  spiderWeb(0, 0, .9) + spider(70, 112, .8, 60) + spiderWeb(480, 0, .7, -1) +
+  `<rect x="350" y="150" width="120" height="8" rx="3" fill="#a9784f"/>` + potion(372, 140, .9, "#7be36a") + potion(410, 140, .8, "#ff6fbf") + potion(446, 140, .9, "#3fa2f7") + candle(392, 108, .8) +
+  `<rect x="10" y="150" width="110" height="8" rx="3" fill="#a9784f"/>` + jackO(40, 130, 18, "cute") + candle(80, 146, .8) + potion(104, 140, .7, "#ffd23f") +
+  `<rect y="270" width="480" height="90" fill="#a9784f"/>` + Array.from({ length: 6 }, (_, i) => `<path d="M0 ${282 + i * 14} H480" stroke="#9b6a43" stroke-width="2"/>`).join("") +
+  cauldron(300, 262, 1) + blackCat(150, 246, 1) + witchHat(150, 206, .85) + broom(448, 250, .9, 12) +
+  `<rect x="20" y="318" width="70" height="14" rx="3" fill="#e8502e"/><rect x="26" y="304" width="62" height="14" rx="3" fill="#4cae52"/><rect x="18" y="290" width="66" height="14" rx="3" fill="#3fa2f7"/>` +
+  jackO(420, 330, 24) + candyCorn(140, 336, .9, -10) + candyCorn(200, 342, .8, 15) + candyCorn(380, 344, .7, 5) + candy(250, 344, .7, "#ff9f2e", 10);
+
+const trickHouse = () =>
+  `<defs><linearGradient id="ht1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a4aa6"/><stop offset=".7" stop-color="#d98ac2"/><stop offset="1" stop-color="#ffb07a"/></linearGradient></defs>` +
+  `<rect width="480" height="360" fill="url(#ht1)"/>` + sparkles(141, 14, 0, 0, 480, 110) + moonFace(400, 56, 32) + bat(170, 40, .6) + bat(110, 70, .45) + bat(320, 34, .4) +
+  `<path d="M0 240 Q120 222 240 236 T480 230 V360 H0Z" fill="#6f9e5a"/>` +
+  curlyTree(56, 268, 1.1, "#4a3060") + owl(18, 158, .5) + hauntedHouse(260, 236, .95) +
+  `<g>${Array.from({ length: 13 }, (_, i) => i === 6 || i === 7 ? "" : `<path d="M${i * 38 + 2} 300 V262 l6 -8 l6 8 V300Z" fill="#3b2a4a"/>`).join("")}<rect x="0" y="270" width="226" height="6" fill="#3b2a4a"/><rect x="290" y="270" width="190" height="6" fill="#3b2a4a"/></g>` +
+  blackCat(420, 238, .45) +
+  `<path d="M246 280 Q232 320 220 360 L300 360 Q284 320 274 280Z" fill="#e8c9a0"/>` + [[256, 296], [264, 316], [252, 338]].map(([sx, sy]) => `<ellipse cx="${sx}" cy="${sy}" rx="10" ry="4" fill="#d4b08a"/>`).join("") +
+  `<path d="M0 304 Q120 292 210 304 L200 360 H0Z M320 304 Q400 292 480 304 V360 H312Z" fill="#5f8f4a"/>` + grassBlades(142, 40, 0, 306, 200, 54, ["#4a7a3a", "#6a9a52"]) + grassBlades(143, 40, 320, 306, 160, 54, ["#4a7a3a", "#6a9a52"]) +
+  jackO(214, 290, 16, "cute") + jackO(306, 290, 16) + jackO(120, 330, 26) + jackO(380, 334, 22, "cute") +
+  `<path d="M436 318 Q450 296 464 318" stroke="#3b2a4a" stroke-width="3" fill="none"/>` + jackO(450, 330, 16).replace(/^/, "") + candyCorn(440, 314, .5) + candyCorn(458, 316, .5, 20) +
+  leafScatter(144, 8, 0, 320, 480, 40) + spook(160, 140, .5);
+
+const halloweenParty = () =>
+  `<rect width="480" height="360" fill="#ffe6c4"/>` + Array.from({ length: 12 }, (_, i) => `<rect x="${i * 40}" y="0" width="20" height="290" fill="#ffd9a8"/>`).join("") +
+  bunting(12, ["#ff8a1f", "#7b58b0", "#3b2a4a", "#7be36a"]) + stringLights(56, 151) +
+  balloonBunch(56, 150, .7, ["#ff8a1f", "#7b58b0", "#ffd23f"]) + balloonBunch(430, 150, .65, ["#7b58b0", "#7be36a", "#ff8a1f"]) +
+  spook(240, 110, .7) + bat(150, 104, .5) + bat(330, 104, .5) +
+  checker(290, 70, 24, "#ff9f2e", "#3b2a4a") + `<rect y="284" width="480" height="10" fill="#7b58b0"/>` +
+  // pumpkin bucket overflowing with candy
+  `<path d="M190 210 Q240 150 290 210" stroke="#3b2a4a" stroke-width="6" fill="none"/>` +
+  candy(214, 210, .8, "#ff6fbf", -20) + candy(262, 206, .8, "#3fa2f7", 15) + lollipop(240, 196, .6, "#7be36a") + candyCorn(228, 214, .7, -10) + candyCorn(252, 216, .7, 12) +
+  jackO(240, 254, 52) +
+  halloweenCupcake(96, 284, 1.1) + halloweenCupcake(140, 292, .9) +
+  `<rect x="340" y="226" width="56" height="66" rx="10" fill="#eaf8ff" opacity=".9"/><rect x="336" y="218" width="64" height="12" rx="4" fill="#7b58b0"/>` + candyCorn(354, 256, .8) + candyCorn(378, 262, .8, 20) + candyCorn(364, 278, .8, -15) + candyCorn(384, 240, .7, 10) +
+  lollipop(430, 268, .7, "#ff8a1f") + lollipop(456, 276, .6, "#7b58b0") +
+  candy(40, 336, .9, "#ff8a1f", -15) + candyCorn(90, 340, .9, 10) + candy(170, 344, .8, "#7be36a", 20) + candyCorn(300, 340, .9, -20) + candy(360, 338, .8, "#ff6fbf", -10) + candyCorn(420, 342, .8, 15) + spider(20, 240, .7, 230);
+
 const THEMES = [
   { key: "photos", label: "My photos", tone: "#ff5d8f" },
+  { key: "halloween", label: "Halloween", tone: "#ff8a1f" },
   { key: "animals", label: "Animals", tone: "#f2952f" },
   { key: "dinos", label: "Dinosaurs", tone: "#3fae6a" },
   { key: "icecream", label: "Ice cream", tone: "#4cc79c" },
@@ -1001,6 +1117,11 @@ const ART = [
   { id: "friends", name: "Ice cream friends", theme: "icecream", draw: coneFriends },
   { id: "shake", name: "Milkshake", theme: "icecream", draw: milkshake },
   { id: "truck", name: "Ice cream truck", theme: "icecream", draw: truck },
+  { id: "patch", name: "Pumpkin patch", theme: "halloween", draw: pumpkinPatch },
+  { id: "ghosts", name: "Friendly ghosts", theme: "halloween", draw: friendlyGhosts },
+  { id: "witchcat", name: "Witch's kitty", theme: "halloween", draw: catCauldron },
+  { id: "spookyhouse", name: "Trick or treat house", theme: "halloween", draw: trickHouse },
+  { id: "party", name: "Halloween party", theme: "halloween", draw: halloweenParty },
   { id: "unicorn", name: "Unicorn", theme: "unicorns", draw: unicorn },
   { id: "unicone", name: "Unicorn ice cream", theme: "unicorns", draw: unicornCone },
   { id: "family", name: "Unicorn mommy and baby", theme: "unicorns", draw: unicornFamily },
