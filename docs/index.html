@@ -178,9 +178,7 @@ h1 span:nth-child(2) { color: var(--ink); }
 /* Xylophone */
 .xylo-bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, #fff8ee, #ffe6cc); }
 .xylo { position: absolute; left: max(4%, 16px); right: max(4%, 16px); top: calc(96px + env(safe-area-inset-top, 0px)); bottom: calc(36px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: center; gap: 1.8%; }
-.xylo::before, .xylo::after { content: ""; position: absolute; left: -1%; right: -1%; height: 22px; border-radius: 11px; background: #b9814f; box-shadow: 0 5px 0 #8a5a3c; z-index: 0; }
-.xylo::before { top: 22%; transform: rotate(-4deg); }
-.xylo::after { bottom: 22%; transform: rotate(4deg); }
+.xylo .rails { position: absolute; left: -2%; top: 0; width: 104%; height: 100%; z-index: 0; overflow: visible; pointer-events: none; }
 .xbar {
   position: relative; z-index: 1; flex: 1; border-radius: 22px; background: var(--c); box-shadow: 0 8px 0 rgba(59,42,74,.22), inset 0 -10px 0 rgba(0,0,0,.08), inset 0 10px 0 rgba(255,255,255,.25);
   transition: transform .08s, filter .08s;
@@ -433,9 +431,14 @@ const whale = () =>
   `<path d="M-20 -54 q-6 -20 -20 -26 M-20 -54 q2 -24 0 -34 M-20 -54 q10 -20 22 -24" stroke="#cfe8ff" stroke-width="6" fill="none" stroke-linecap="round"/>` +
   eye(-50, -10, 8) + cheek(-36, 8) + `<path d="M-74 12 Q-60 24 -44 16" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
 const octopus = () =>
-  [-40, -24, -8, 8, 24, 40].map((x, i) => `<path d="M${x} 14 Q${x + (i % 2 ? 14 : -14)} 46 ${x + x * .5} 66" stroke="#b388eb" stroke-width="15" fill="none" stroke-linecap="round"/>`).join("") +
-  `<ellipse cx="0" cy="-12" rx="48" ry="44" fill="#b388eb"/><circle cx="-24" cy="-36" r="5" fill="#d7c2ff"/><circle cx="26" cy="-30" r="4" fill="#d7c2ff"/>` +
-  eye(-16, -12, 8) + eye(16, -12, 8) + cheek(-30, 6) + cheek(30, 6) + smile(0, 8, 9);
+  [-42, -30, -18, -6, 6, 18, 30, 42].map((x) => {
+    const sgn = x < 0 ? -1 : 1, out = Math.abs(x) / 42;
+    const ex = x * 1.08 + sgn * 6 * out, cs = Math.abs(x) < 10 ? -sgn : sgn; // the middle pair curl inward
+    return `<path d="M${f1(x * .78)} 16 Q${f1(x * 1.15)} 40 ${f1(ex)} 54 Q${f1(ex + cs * 4)} 64 ${f1(ex + cs * 12)} 60" stroke="#9a68de" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` +
+      `<circle cx="${f1(x * 1.02)}" cy="40" r="2" fill="#d7c2ff"/>`;
+  }).join("") +
+  `<ellipse cx="0" cy="16" rx="36" ry="10" fill="#b388eb"/><ellipse cx="0" cy="-14" rx="46" ry="42" fill="#b388eb"/><ellipse cx="-16" cy="-34" rx="14" ry="9" fill="#cfb4ff" opacity=".7"/><circle cx="24" cy="-34" r="5" fill="#d7c2ff"/><circle cx="32" cy="-20" r="3.5" fill="#d7c2ff"/>` +
+  eye(-16, -12, 8) + eye(16, -12, 8) + cheek(-28, 4) + cheek(28, 4) + smile(0, 6, 9);
 const crab = () =>
   `<path d="M-28 10 l-18 14 M-22 16 l-14 18 M28 10 l18 14 M22 16 l14 18" stroke="#ff6b6b" stroke-width="5" stroke-linecap="round"/>` +
   `<path d="M-26 -8 L-44 -24 M26 -8 L44 -24" stroke="#ff6b6b" stroke-width="6" stroke-linecap="round"/><circle cx="-48" cy="-30" r="14" fill="#ff6b6b"/><circle cx="48" cy="-30" r="14" fill="#ff6b6b"/>` +
@@ -1825,7 +1828,9 @@ const xyloGame = {
   name: "Rainbow xylophone",
   start(el) {
     el.className = "xylophone"; this.timers = []; this.fingers = new Map();
-    el.innerHTML = `<div class="xylo-bg"></div><div class="xylo">${BAR_COLORS.map((c, i) => `<div class="xbar" data-i="${i}" style="--c:${c};height:${92 - i * 6}%"></div>`).join("")}</div>
+    // Wooden rails run through the nails: they close in toward the short (high) end like a real xylophone.
+    const rail = (y1, y2) => `<line x1="0" y1="${y1 + 1.2}" x2="100" y2="${y2 + 1.2}" stroke="#8a5a3c" stroke-width="22" stroke-linecap="round" vector-effect="non-scaling-stroke"/><line x1="0" y1="${y1}" x2="100" y2="${y2}" stroke="#b9814f" stroke-width="22" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`;
+    el.innerHTML = `<div class="xylo-bg"></div><div class="xylo"><svg class="rails" viewBox="0 0 100 100" preserveAspectRatio="none">${rail(16.2, 32.7)}${rail(83.8, 67.3)}</svg>${BAR_COLORS.map((c, i) => `<div class="xbar" data-i="${i}" style="--c:${c};height:${92 - i * 6}%"></div>`).join("")}</div>
       <div class="corner-tools"><button class="tool-btn" id="songBtn" aria-label="Play a song">${NOTE_SVG("#3b2a4a")}</button></div>`;
     const xylo = el.querySelector(".xylo");
     const barAt = (x, y) => { const t = document.elementFromPoint(x, y); return t && t.closest ? t.closest(".xbar") : null; };
@@ -1864,7 +1869,7 @@ const xyloGame = {
   stopSong() { this.timers.forEach(clearTimeout); this.timers = []; const b = $("#songBtn"); if (b) b.setAttribute("aria-pressed", "false"); },
   stop() { this.stopSong(); },
   thumb: thumbURL(`<defs><radialGradient id="xt" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#fff8ee"/><stop offset="1" stop-color="#ffe0bd"/></radialGradient></defs><rect width="480" height="360" fill="url(#xt)"/>` +
-    `<rect x="30" y="112" width="420" height="16" rx="8" fill="#b9814f" transform="rotate(-4 240 120)"/><rect x="30" y="236" width="420" height="16" rx="8" fill="#b9814f" transform="rotate(4 240 244)"/>` +
+    `<path d="M30 71 L450 138 M30 289 L450 222" stroke="#b9814f" stroke-width="16" stroke-linecap="round"/>` +
     BAR_COLORS.map((c, i) => { const h = 250 - i * 16, x = 48 + i * 50; return `<rect x="${x}" y="${180 - h / 2}" width="40" height="${h}" rx="14" fill="${c}"/><circle cx="${x + 20}" cy="${180 - h / 2 + 22}" r="5" fill="#fff"/><circle cx="${x + 20}" cy="${180 + h / 2 - 22}" r="5" fill="#fff"/>`; }).join("") +
     `<g transform="rotate(-30 400 70)"><rect x="396" y="40" width="8" height="90" rx="4" fill="#d9a46a"/><circle cx="400" cy="38" r="16" fill="#ff5d8f"/></g>` +
     [[90, 50, "#ff4d5e"], [250, 40, "#3fa2f7"]].map(([x, y, c]) => `<g transform="translate(${x} ${y}) scale(1.2)"><path d="M18 36 V10 L38 6 V30" stroke="${c}" stroke-width="5" fill="none"/><ellipse cx="13" cy="37" rx="7" ry="5.5" fill="${c}"/><ellipse cx="33" cy="31" rx="7" ry="5.5" fill="${c}"/></g>`).join("")),
