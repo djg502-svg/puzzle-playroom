@@ -75,8 +75,11 @@ for size, name in [(180, "apple-touch-icon.png"), (192, "icon-192.png"), (512, "
 }, indent=2))
 
 files = ["./", "index.html", "manifest.webmanifest", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "fonts/baloo2-latin.woff2"]
+# Recorded voices (voices/make_voices.py) are cached too, so speech works offline.
+files += sorted(str(f.relative_to(SITE)) for f in (SITE / "voice").glob("**/*") if f.is_file() and not f.name.startswith("."))
 # Cache name changes whenever the game changes, so iPads pick up new versions.
-version = hashlib.sha256(html.encode()).hexdigest()[:10]
+voice_meta = b"".join((SITE / "voice" / n).read_bytes() for n in ("voices.json", ".stamps.json") if (SITE / "voice" / n).exists())
+version = hashlib.sha256(html.encode() + voice_meta).hexdigest()[:10]
 (SITE / "sw.js").write_text(f"""const CACHE = "puzzles-{version}";
 const FILES = {json.dumps(files)};
 self.addEventListener("install", (e) => {{

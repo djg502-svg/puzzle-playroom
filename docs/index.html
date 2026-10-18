@@ -1332,16 +1332,65 @@ function unlockSpeech() {
   } catch (e) { }
 }
 ["touchend", "click", "keydown"].forEach(t => document.addEventListener(t, unlockSpeech, { capture: true, passive: true }));
-function stopSpeech() {
-  if (!hasSpeech) return;
-  try { if (speechSynthesis.speaking || speechSynthesis.pending) { speechSynthesis.cancel(); cancelledAt = performance.now(); } } catch (e) { }
+/* Recorded voices (made with Piper, see voices/) live in voice/<voice>/<phrase>.mp3 with an index in
+   voice/voices.json. They play through Web Audio, one after another; a phrase without a recording
+   (or a page without the files, like the claude.ai preview) uses the iPad's own voice instead. */
+const phraseKey = (t) => t.toLowerCase().replace(/[^a-z0-9' -]+/g, " ").replace(/\s+/g, " ").trim();
+const clips = { index: null, voice: null, cache: new Map(), queue: [], playing: null, gen: 0 };
+try {
+  fetch("voice/voices.json").then(r => r.ok ? r.json() : null).then(ix => {
+    if (ix && ix.voices && ix.voices.length) { clips.index = ix; pickVoiceForSession(); }
+  }).catch(() => { });
+} catch (e) { }
+// A different recorded voice each time a game or puzzle opens, so it never drones.
+function pickVoiceForSession() {
+  if (!clips.index) return;
+  const vs = clips.index.voices.filter(v => v !== clips.voice);
+  clips.voice = (vs.length ? vs : clips.index.voices)[Math.floor(Math.random() * (vs.length || clips.index.voices.length))];
 }
-function sayQueued(text) {
-  if (!soundOn || !hasSpeech) return;
+function clipBuffer(name) {
+  const url = `voice/${clips.voice}/${name}.mp3`;
+  if (!clips.cache.has(url)) {
+    clips.cache.set(url, fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(b => new Promise((res, rej) => actx.decodeAudioData(b, res, rej))));
+  }
+  return clips.cache.get(url);
+}
+function playNextClip() {
+  const item = clips.queue.shift();
+  clips.playing = item || null;
+  if (!item) return;
+  item.buf.then(buf => {
+    if (clips.playing !== item || item.gen !== clips.gen) return;
+    const src = actx.createBufferSource(), g = actx.createGain();
+    src.buffer = buf; g.gain.value = 1.4; src.connect(g); g.connect(actx.destination);
+    src.onended = () => { if (clips.playing === item) playNextClip(); };
+    item.src = src; src.start();
+  }, () => { if (clips.playing === item) { clips.playing = null; sayWithSystemVoice(item.text); playNextClip(); } });
+}
+function sayWithSystemVoice(text) {
+  if (!hasSpeech) return;
   try {
     const u = utterance(text), wait = 150 - (performance.now() - cancelledAt);
     if (wait > 0) setTimeout(() => speechSynthesis.speak(u), wait); else speechSynthesis.speak(u);
   } catch (e) { }
+}
+function stopSpeech() {
+  clips.gen++; clips.queue = [];
+  const p = clips.playing; clips.playing = null;
+  if (p && p.src) { try { p.src.onended = null; p.src.stop(); } catch (e) { } }
+  if (!hasSpeech) return;
+  try { if (speechSynthesis.speaking || speechSynthesis.pending) { speechSynthesis.cancel(); cancelledAt = performance.now(); } } catch (e) { }
+}
+function sayQueued(text) {
+  if (!soundOn) return;
+  const name = clips.index && clips.voice && clips.index.phrases[phraseKey(text)];
+  if (name && audio()) {
+    clips.queue.push({ text, gen: clips.gen, buf: clipBuffer(name) });
+    if (!clips.playing) playNextClip();
+    return;
+  }
+  sayWithSystemVoice(text);
 }
 function speak(text) { stopSpeech(); sayQueued(text); }
 
@@ -1478,6 +1527,7 @@ async function start(id) {
   // aspect = piece width / height (1 for square cells; wide for slices).
   cur = { art, cols, rows, pieces, tabs: M.tabs, aspect: M.board ? M.board * rows / cols : 1, locked: 0, done: false, img: null };
 
+  pickVoiceForSession();
   home.hidden = true; game.hidden = false; fxCanvas = fx;
   doneBar.hidden = true; full.classList.remove("show"); ghost.classList.remove("cheer");
   piecesEl.innerHTML = "";
@@ -1634,7 +1684,7 @@ function win() {
     full.classList.add("show");
     ghost.classList.add("cheer"); full.classList.add("cheer");
     sfx.win();
-    speak(cur.art.name ? `Yay! You did it! ${cur.art.name}!` : "Yay! You did it!");
+    speak("Yay! You did it!"); if (cur.art.name) sayQueued(cur.art.name + "!");
     for (let k = 0; k < 4; k++) setTimeout(() => burst(L.W * (.2 + .2 * k), L.H * .35, 40, 2.2), k * 180);
   }, 380);
   setTimeout(() => { if (cur === token) doneBar.hidden = false; }, 1500);
@@ -1732,6 +1782,7 @@ function openGame(key) {
   playFx.width = play.clientWidth * dpr; playFx.height = play.clientHeight * dpr;
   playFx.style.width = play.clientWidth + "px"; playFx.style.height = play.clientHeight + "px";
   fxCanvas = playFx;
+  pickVoiceForSession();
   activeGame = GAMES[key]; activeGame.start(playArea);
   try { navigator.wakeLock?.request("screen").then(w => wakeLock = w, () => { }); } catch (e) { }
 }
