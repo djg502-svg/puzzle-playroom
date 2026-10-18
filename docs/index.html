@@ -1304,10 +1304,46 @@ const sfx = {
   snap(k) { const n = NOTES[Math.min(k, NOTES.length - 1)]; tone(n, 0, .22, "triangle", .26); tone(n * 2, .02, .14, "sine", .07); },
   win() { [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, i * .12, .3, "triangle", .22)); },
 };
-function speak(text) {
-  if (!soundOn || !("speechSynthesis" in window)) return;
-  try { const u = new SpeechSynthesisUtterance(text); u.rate = .9; u.pitch = 1.25; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) { }
+/* ---- Spoken words ----
+   iPadOS only lets a page speak after speech has been started from a tap, and Safari can drop a
+   phrase that starts in the same instant another is cancelled. So: unlock speech with a silent
+   phrase on the first tap, pick an English voice, and wait a moment after cancelling. */
+const hasSpeech = "speechSynthesis" in window;
+let speechVoice = null, speechUnlocked = false, cancelledAt = 0;
+function pickVoice() {
+  try {
+    const vs = speechSynthesis.getVoices();
+    speechVoice = vs.find(v => /^en[-_]US/i.test(v.lang) && /Samantha|Karen|Nicky|Ava|Allison|Susan|Google US/i.test(v.name))
+      || vs.find(v => /^en[-_]US/i.test(v.lang) && v.localService) || vs.find(v => /^en/i.test(v.lang)) || null;
+  } catch (e) { speechVoice = null; }
 }
+if (hasSpeech) { pickVoice(); try { speechSynthesis.addEventListener("voiceschanged", pickVoice); } catch (e) { } }
+function utterance(text) {
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US"; u.rate = .9; u.pitch = 1.2; u.volume = 1;
+  if (speechVoice) u.voice = speechVoice;
+  return u;
+}
+function unlockSpeech() {
+  if (!hasSpeech) return;
+  try {
+    if (!speechUnlocked) { const u = utterance(" "); u.volume = 0; speechSynthesis.speak(u); speechUnlocked = true; }
+    if (speechSynthesis.paused) speechSynthesis.resume();
+  } catch (e) { }
+}
+["touchend", "click", "keydown"].forEach(t => document.addEventListener(t, unlockSpeech, { capture: true, passive: true }));
+function stopSpeech() {
+  if (!hasSpeech) return;
+  try { if (speechSynthesis.speaking || speechSynthesis.pending) { speechSynthesis.cancel(); cancelledAt = performance.now(); } } catch (e) { }
+}
+function sayQueued(text) {
+  if (!soundOn || !hasSpeech) return;
+  try {
+    const u = utterance(text), wait = 150 - (performance.now() - cancelledAt);
+    if (wait > 0) setTimeout(() => speechSynthesis.speak(u), wait); else speechSynthesis.speak(u);
+  } catch (e) { }
+}
+function speak(text) { stopSpeech(); sayQueued(text); }
 
 /* ================= Home screen ================= */
 const $ = (s) => document.querySelector(s);
@@ -1669,11 +1705,6 @@ document.addEventListener("dblclick", (e) => e.preventDefault());
 /* ================= Mini games ================= */
 const play = $("#play"), playArea = $("#playArea"), playFx = $("#playFx");
 const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
-const sayQueued = (text) => {
-  if (!soundOn || !("speechSynthesis" in window)) return;
-  try { const u = new SpeechSynthesisUtterance(text); u.rate = .9; u.pitch = 1.25; speechSynthesis.speak(u); } catch (e) { }
-};
-const stopSpeech = () => { try { speechSynthesis.cancel(); } catch (e) { } };
 function popSound(freq = 1400, ping = 880, vol = .9) {
   const a = audio(); if (!a) return;
   const len = Math.floor(a.sampleRate * .12), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
