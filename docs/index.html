@@ -210,6 +210,22 @@ h1 span:nth-child(2) { color: var(--ink); }
   .col-items { flex: 1 1 auto; width: 100%; }
   .col-word { font-size: clamp(50px, 8vh, 110px); }
 }
+/* Bubble wrap */
+.wrap-sheet { position: absolute; border-radius: 28px; background: var(--sheet); box-shadow: 0 8px 0 var(--shadow), inset 0 0 0 4px rgba(255,255,255,.6); transition: background .5s; }
+.bub {
+  position: absolute; left: 0; top: 0; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, rgba(255,255,255,.95) 0 11%, rgba(255,255,255,.35) 12% 22%, var(--c1) 23% 58%, var(--c2) 100%);
+  box-shadow: inset -5px -7px 10px rgba(0,0,0,.08), 0 5px 7px rgba(60,40,80,.18);
+  transition: transform .12s ease, opacity .2s;
+}
+.bub.in { animation: bubIn .45s cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes bubIn { from { transform: scale(0); } to { transform: scale(1); } }
+.bub.popped {
+  transform: scale(.8); background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.45), rgba(255,255,255,.12) 70%);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.55);
+}
+.bub.popped::after { content: ""; position: absolute; inset: 28%; border-top: 3px solid rgba(255,255,255,.7); border-radius: 50% 50% 0 0; transform: rotate(-20deg); }
+@media (prefers-reduced-motion: reduce) { .bub.in { animation: none; } }
 /* Shadow match */
 .shape-panel { position: absolute; background: rgba(255,255,255,.75); border-radius: 30px; box-shadow: 0 8px 0 var(--shadow); }
 .shape-sil, .shape-item { position: absolute; left: 0; top: 0; }
@@ -1655,14 +1671,14 @@ const sayQueued = (text) => {
   try { const u = new SpeechSynthesisUtterance(text); u.rate = .9; u.pitch = 1.25; speechSynthesis.speak(u); } catch (e) { }
 };
 const stopSpeech = () => { try { speechSynthesis.cancel(); } catch (e) { } };
-function popSound() {
+function popSound(freq = 1400, ping = 880, vol = .9) {
   const a = audio(); if (!a) return;
   const len = Math.floor(a.sampleRate * .12), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
   for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
   const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
-  src.buffer = buf; f.type = "bandpass"; f.frequency.value = 1400; f.Q.value = .8; g.gain.value = .9;
+  src.buffer = buf; f.type = "bandpass"; f.frequency.value = freq; f.Q.value = .8; g.gain.value = vol;
   src.connect(f); f.connect(g); g.connect(a.destination); src.start();
-  tone(880, 0, .12, "triangle", .12);
+  if (ping) tone(ping, 0, .12, "triangle", .12);
 }
 const svgWrap = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
 const thumbURL = (inner) => "data:image/svg+xml;charset=utf-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="960" height="720">${inner}</svg>`);
@@ -2143,7 +2159,79 @@ const shadowGame = {
     [[370, 110, "grapes", -8], [380, 250, "ice cream", 6]].map(([x, y, w, r]) => { const e = SHAPE_POOL.find(p => p[0] === w)[1]; const [vx, vy, vw, vh] = e[0].split(" ").map(Number), s = 100 / Math.max(vw, vh); return `<g transform="translate(${x} ${y}) rotate(${r}) scale(${f1(s)}) translate(${-(vx + vw / 2)} ${-(vy + vh / 2)})">${e[1]()}</g>`; }).join("") +
     `<g transform="translate(210 250) scale(${f1(90 / 56)})"><path d="${starD(0, 0, 25, 11.5)}" fill="#ffc93c" stroke="#f4a261" stroke-width="2" stroke-linejoin="round"/></g>`),
 };
-const GAMES = { numbers: numbersGame, abc: abcGame, colors: colorsGame, shadows: shadowGame, balloons: balloonGame, xylophone: xyloGame };
+/* ---- Bubble wrap: tap or swipe to pop every bubble; a new sheet in a new color follows ---- */
+const WRAP_SHEETS = [
+  { sheet: "#dff3ff", colors: [["#cfeeff", "#8fd3ff"]] },
+  { sheet: "#ffe3f1", colors: [["#ffd1e8", "#ff8fc4"]] },
+  { sheet: "#dcf8ec", colors: [["#c9f2df", "#6fdcaa"]] },
+  { sheet: "#fff4cc", colors: [["#ffeeaa", "#ffcf3f"]] },
+  { sheet: "#f0e9ff", colors: [["#ffc4cc", "#ff4d5e"], ["#ffdcb0", "#ff9f2e"], ["#fff0a8", "#ffd23f"], ["#c9f2d4", "#44c76b"], ["#cde6ff", "#3fa2f7"], ["#e2d4ff", "#9b6cf0"]] },
+];
+const PENTA = [523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51];
+const wrapGame = {
+  name: "Bubble wrap",
+  start(el) {
+    el.className = "bubblewrap"; this.sheetIdx = 0; this.fingers = new Set();
+    el.innerHTML = `<div class="wrap-sheet" id="wrapSheet"></div><div id="wrapLayer"></div>`;
+    this.layer = el.querySelector("#wrapLayer");
+    const popAt = (x, y) => { const t = document.elementFromPoint(x, y); const b = t && t.closest && t.closest(".bub"); if (b) this.pop(b); };
+    this.onDown = (e) => { if (!e.target.closest("#wrapLayer, #wrapSheet")) return; e.preventDefault(); audio(); try { el.setPointerCapture(e.pointerId); } catch (err) { } this.fingers.add(e.pointerId); popAt(e.clientX, e.clientY); };
+    // Swiping pops every bubble under the finger, including the in-between points of fast swipes.
+    this.onMove = (e) => {
+      if (!this.fingers.has(e.pointerId)) return;
+      const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      (evs.length ? evs : [e]).forEach(ev => popAt(ev.clientX, ev.clientY));
+    };
+    this.onUp = (e) => this.fingers.delete(e.pointerId);
+    el.addEventListener("pointerdown", this.onDown); el.addEventListener("pointermove", this.onMove);
+    el.addEventListener("pointerup", this.onUp); el.addEventListener("pointercancel", this.onUp);
+    this.onResize = () => this.build(false);
+    window.addEventListener("resize", this.onResize);
+    this.build(true);
+  },
+  build(animate) {
+    clearTimeout(this.next);
+    const W = play.clientWidth, H = play.clientHeight, top = 96, m = 18;
+    const area = { x: Math.max(m, 16), y: top, w: W - Math.max(m, 16) * 2, h: H - top - m - 8 };
+    const S = WRAP_SHEETS[this.sheetIdx % WRAP_SHEETS.length];
+    const sheet = $("#wrapSheet"); sheet.style.setProperty("--sheet", S.sheet);
+    Object.assign(sheet.style, { left: area.x + "px", top: area.y + "px", width: area.w + "px", height: area.h + "px" });
+    // Bubbles about 1/7 of the short side; offset every other row like real bubble wrap.
+    const d = Math.max(54, Math.min(110, Math.min(area.w, area.h) / 6.2)), gap = d * .14, step = d + gap, rowStep = step * .88;
+    const cols = Math.max(2, Math.floor((area.w - gap - step / 2) / step)), rows = Math.max(2, Math.floor((area.h - gap - d) / rowStep) + 1);
+    const ox = area.x + (area.w - (cols * step - gap + step / 2)) / 2, oy = area.y + (area.h - ((rows - 1) * rowStep + d)) / 2;
+    this.layer.innerHTML = ""; this.left = 0;
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const b = document.createElement("div"), [c1, c2] = S.colors[(r * cols + c) % S.colors.length];
+      b.className = "bub" + (animate ? " in" : "");
+      b.style.cssText = `width:${d}px;height:${d}px;left:${f1(ox + c * step + (r % 2 ? step / 2 : 0))}px;top:${f1(oy + r * rowStep)}px;--c1:${c1};--c2:${c2}` + (animate ? `;animation-delay:${((r + c) * 28)}ms` : "");
+      this.layer.appendChild(b); this.left++;
+    }
+  },
+  pop(b) {
+    if (b.classList.contains("popped")) return;
+    b.classList.remove("in"); b.classList.add("popped");
+    popSound(1000 + Math.random() * 1300, PENTA[Math.floor(Math.random() * PENTA.length)], .7);
+    const r = b.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2, 5, .55);
+    if (--this.left === 0) {
+      setTimeout(() => { sfx.win(); stopSpeech(); sayQueued("Yay! All popped!"); for (let k = 0; k < 3; k++) setTimeout(() => burst(play.clientWidth * (.25 + .25 * k), play.clientHeight * .4, 40, 2.2), k * 170); }, 250);
+      this.next = setTimeout(() => { this.sheetIdx++; this.build(true); }, 2200);
+    }
+  },
+  stop() {
+    clearTimeout(this.next); window.removeEventListener("resize", this.onResize);
+    playArea.removeEventListener("pointerdown", this.onDown); playArea.removeEventListener("pointermove", this.onMove);
+    playArea.removeEventListener("pointerup", this.onUp); playArea.removeEventListener("pointercancel", this.onUp);
+    this.fingers.clear();
+  },
+  thumb: thumbURL(`<rect width="480" height="360" fill="#fff3e4"/><rect x="30" y="30" width="420" height="300" rx="26" fill="#dff3ff"/>` +
+    `<defs><radialGradient id="bw" cx=".34" cy=".3" r=".75"><stop offset="0" stop-color="#fff"/><stop offset=".22" stop-color="#e8f7ff"/><stop offset=".6" stop-color="#cfeeff"/><stop offset="1" stop-color="#8fd3ff"/></radialGradient></defs>` +
+    Array.from({ length: 20 }, (_, i) => { const r = Math.floor(i / 5), c = i % 5, x = 82 + c * 80 + (r % 2 ? 36 : 0) - (r % 2 ? 18 : 0), y = 78 + r * 66, popped = [3, 7, 8, 12, 16].includes(i);
+      return popped ? `<circle cx="${x}" cy="${y}" r="26" fill="#fff" opacity=".35" stroke="#fff" stroke-width="3"/><path d="M${x - 12} ${y - 4} q12 -10 24 0" stroke="#fff" stroke-width="3" fill="none"/>` : `<circle cx="${x}" cy="${y}" r="30" fill="url(#bw)"/><ellipse cx="${x - 10}" cy="${y - 11}" rx="7" ry="5" fill="#fff"/>`; }).join("") +
+    `<path d="M300 210 q10 -30 34 -30 q-4 18 4 34" fill="none"/>` + at(330, 200, 1, `<path d="M-6 0 l-10 -10 M6 0 l10 -10 M0 -4 v-14" stroke="#ff9f2e" stroke-width="4" stroke-linecap="round"/>`)),
+};
+const GAMES = { numbers: numbersGame, abc: abcGame, colors: colorsGame, shadows: shadowGame, balloons: balloonGame, wrap: wrapGame, xylophone: xyloGame };
 
 // Automated tests open the page with #selftest to read piece targets.
 if (location.hash === "#selftest") window.__pp = { get cur() { return cur; }, get L() { return L; } };
